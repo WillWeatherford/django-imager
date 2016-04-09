@@ -14,7 +14,7 @@ class Photo(md.Model):
     description = md.TextField()
     date_uploaded = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
-    date_published = md.DateTimeField()
+    date_published = md.DateTimeField(auto_now_add=True)
     published = md.CharField(max_length=255,
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)

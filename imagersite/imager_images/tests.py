@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.test import TestCase
-from models import Photo
+from django.utils import timezone
+from .models import Photo
 import datetime
 import factory
 
@@ -29,4 +30,4 @@ class BasicPhotoCase(TestCase):
         self.assertIsNotNone(self.photo.description)
 
     def test_photo_has_up_date(self):
-        self.assertGreater(datetime.now(), self.photo.date_uploaded)
+        self.assertGreater(timezone.now(), self.photo.date_uploaded)
