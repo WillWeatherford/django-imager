@@ -11,9 +11,7 @@ class Photo(md.Model):
     """Base class representing a single image in the database."""
 
     user = md.ForeignKey(settings.AUTH_USER_MODEL,
-                         related_name='photos',
-                         default=None,
-                         null=True)
+                         related_name='photos')
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_uploaded = md.DateTimeField(auto_now_add=True)

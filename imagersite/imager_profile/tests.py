@@ -16,8 +16,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = settings.AUTH_USER_MODEL
 
 
-class BasicUserCase(TestCase):
-    """Simple test case for Photos."""
+class OneUserCase(TestCase):
 
     def setUp(self):
         """Set up User models for testing."""
@@ -26,6 +25,14 @@ class BasicUserCase(TestCase):
             email='testuser@example.com',
         )
         self.user.set_password('secret')
+
+
+class BasicUserProfileCase(OneUserCase):
+    """Simple test case for Photos."""
+
+    def setUp(self):
+        """Set up User models for testing."""
+        super(BasicUserProfileCase, self).setUp()
 
         self.deleted_user = UserFactory.create(
             username='deleteme',

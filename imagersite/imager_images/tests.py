@@ -1,21 +1,12 @@
 """Test that Photo and Album models work as expected."""
 from __future__ import unicode_literals
-from django.conf import settings
 from django.test import TestCase
 from django.utils import timezone
 from .models import Photo
+from imager_profile.tests import OneUserCase
 import factory
 
 PHOTO_TEST_BATCH_SIZE = 20
-
-
-class UserFactory(factory.django.DjangoModelFactory):
-    """Factory for User model in tests."""
-
-    class Meta:
-        """Establish User model as the product of this factory."""
-
-        model = settings.AUTH_USER_MODEL
 
 
 class PhotoFactory(factory.django.DjangoModelFactory):
@@ -27,19 +18,15 @@ class PhotoFactory(factory.django.DjangoModelFactory):
         model = Photo
 
 
-class BasicPhotoCase(TestCase):
+class BasicPhotoCase(OneUserCase):
     """Simple test case for Photos."""
 
     def setUp(self):
         """Add one Photo to the database for testing."""
-        # self.user = UserFactory.create(
-        #     username='testuser',
-        #     email='testuser@example.com',
-        # )
-        # self.user.set_password('secret')
+        super(BasicPhotoCase, self).setUp()
 
         self.photo = PhotoFactory.create(
-            # user=self.user,
+            user=self.user,
             title='Test photo',
             description='Test description',
         )
@@ -47,6 +34,11 @@ class BasicPhotoCase(TestCase):
     def test_photo_exists(self):
         """Test that the photo set up from the factory does exist."""
         self.assertTrue(self.photo)
+
+    def test_photo_pk(self):
+        """Test that newly created User's profile has a primary key."""
+        self.assertIsInstance(self.photo.pk, int)
+        self.assertTrue(self.photo.pk)
 
     def test_photo_has_title(self):
         """Check that photo has its title attribute."""
