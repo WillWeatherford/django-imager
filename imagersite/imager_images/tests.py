@@ -1,6 +1,6 @@
 """Test that Photo and Album models work as expected."""
 from __future__ import unicode_literals
-from django.test import TestCase
+# from django.test import TestCase
 from django.utils import timezone
 from .models import Photo
 from imager_profile.tests import OneUserCase
@@ -52,17 +52,30 @@ class BasicPhotoCase(OneUserCase):
         """Check that photo uploaded_date is a datetime before now."""
         self.assertGreater(timezone.now(), self.photo.date_uploaded)
 
+    def test_user(self):
+        """Test that user attr of Photo is established User."""
+        self.assertIs(self.photo.user, self.user)
 
-class MultiPhotoCase(TestCase):
+
+class MultiPhotoCase(OneUserCase):
     """Test case using many Photo instances."""
 
     def setUp(self):
         """Add many Photos to the database for testing."""
+        super(MultiPhotoCase, self).setUp()
+
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_TEST_BATCH_SIZE,
+            user=self.user,
             title='Test photo',
             description='Test description',
         )
 
     def test_correct_batch_size(self):
+        """Test that batch of created photos are as many as expected."""
         self.assertEqual(len(self.photo_batch), PHOTO_TEST_BATCH_SIZE)
+
+    def test_user(self):
+        """Test that user attr of all Photos is established User."""
+        for photo in self.photo_batch:
+            self.assertIs(photo.user, self.user)
