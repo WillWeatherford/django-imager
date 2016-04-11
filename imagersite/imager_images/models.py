@@ -28,6 +28,10 @@ class Album(md.Model):
 
     owner = md.ForeignKey(settings.AUTH_USER_MODEL,
                           related_name='albums')
+    cover = md.ForeignKey('Photo',
+                          related_name='covered_albums',
+                          null=True,
+                          default=None)
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)
@@ -36,12 +40,14 @@ class Album(md.Model):
     published = md.CharField(max_length=255,
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)
-    # cover
 
     def set_cover(self):
         pass
 
     def add_photo(self):
+        pass
+
+    def add_photos(self):
         pass
 
     def remove_photo(self):
