@@ -4,6 +4,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.db.models import QuerySet, Manager
 from .models import ImagerProfile
+import random
 import factory
 
 USER_TEST_BATCH_SIZE = 40
@@ -22,6 +23,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     email = factory.Faker('email')
     username = factory.LazyAttribute(
         lambda obj: ''.join((obj.first_name, obj.last_name)))
+    password = factory.PostGenerationMethodCall('set_password',
+                                                'secret')
 
 
 class OneUserCase(TestCase):
@@ -30,7 +33,7 @@ class OneUserCase(TestCase):
     def setUp(self):
         """Set up User models for testing."""
         self.user = UserFactory.create()
-        self.user.set_password('secret')
+        # self.user.set_password('secret')
 
 
 class DeletedUserCase(OneUserCase):
@@ -96,4 +99,8 @@ class ManyUsersCase(TestCase):
         """Add many Users to the test."""
         self.user_batch = UserFactory.create_batch(USER_TEST_BATCH_SIZE)
 
-# Test deactivating some of many users.
+    def test_active_count(self):
+        """Make sure that the active user count is the expected size."""
+        self.assertEqual(ImagerProfile.active.count(), USER_TEST_BATCH_SIZE)
+
+    # def 

@@ -22,6 +22,7 @@ class PhotoFactory(factory.django.DjangoModelFactory):
     title = factory.Faker('sentence')
     description = factory.Faker('text')
     published = random.choice(PUB_CHOICES)
+    owner = factory.SubFactory(UserFactory)
 
 
 class AlbumFactory(factory.django.DjangoModelFactory):
@@ -35,6 +36,7 @@ class AlbumFactory(factory.django.DjangoModelFactory):
     title = factory.Faker('sentence')
     description = factory.Faker('text')
     published = random.choice(PUB_CHOICES)
+    owner = factory.SubFactory(UserFactory)
 
 
 class OnePhotoOrAlbumCase(object):
@@ -57,10 +59,6 @@ class OnePhotoOrAlbumCase(object):
         """Check that instance has its description attribute."""
         self.assertTrue(self.instance.description)
 
-    def test_owner(self):
-        """Test that owner attr of Photo or Album is established User."""
-        self.assertIs(self.instance.owner, self.user)
-
     def test_instance_has_mod_date(self):
         """Check that photo date_modified is a datetime before now."""
         self.assertGreater(timezone.now(), self.instance.date_modified)
@@ -75,9 +73,7 @@ class OnePhotoCase(TestCase, OnePhotoOrAlbumCase):
 
     def setUp(self):
         """Add one Photo to the database for testing."""
-        self.user = UserFactory.create()
-        self.user.set_password('secret')
-        self.instance = PhotoFactory.create(owner=self.user)
+        self.instance = PhotoFactory.create()
 
     def test_photo_has_up_date(self):
         """Check that photo uploaded_date is a datetime before now."""
@@ -93,9 +89,7 @@ class OneAlbumCase(TestCase, OnePhotoOrAlbumCase):
 
     def setUp(self):
         """Add one Album to the database for testing."""
-        self.user = UserFactory.create()
-        self.user.set_password('secret')
-        self.instance = AlbumFactory.create(owner=self.user)
+        self.instance = AlbumFactory.create()
 
     def test_init_no_photos(self):
         """Check that Album initializes with no photos."""
@@ -115,12 +109,11 @@ class ManyPhotosOneAlbumCase(TestCase):
 
     def setUp(self):
         """Add one Album  and many Photos to the database for testing."""
-        self.user = UserFactory.create()
-        self.user.set_password('secret')
+        owner = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_TEST_BATCH_SIZE,
-            owner=self.user)
-        self.album = AlbumFactory.create(owner=self.user)
+            owner=owner)
+        self.album = AlbumFactory.create(owner=owner)
         self.album.add_photos(self.photo_batch)
 
     def test_correct_photo_batch_size(self):
@@ -161,13 +154,13 @@ class ManyPhotosManyAlbumsCase(TestCase):
 
     def setUp(self):
         """Add many Photos to the database for testing."""
-        self.user = UserFactory.create()
+        owner = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_TEST_BATCH_SIZE,
-            owner=self.user)
+            owner=owner)
         self.album_batch = AlbumFactory.create_batch(
             ALBUM_TEST_BATCH_SIZE,
-            owner=self.user)
+            owner=owner)
         for album in self.album_batch:
             album.add_photos(self.photo_batch)
 
@@ -181,11 +174,6 @@ class ManyPhotosManyAlbumsCase(TestCase):
         """Test that batch of created photos are as many as expected."""
         photo = self.photo_batch[0]
         self.assertEqual(len(list(photo.albums.all())), ALBUM_TEST_BATCH_SIZE)
-
-    def test_album_owner(self):
-        """Test that user attr of all Photos is established User."""
-        for album in self.album_batch:
-            self.assertIs(album.owner, self.user)
 
     def test_album_photo_owner(self):
         """Test that all albums and photos have the same owner."""
