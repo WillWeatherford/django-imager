@@ -36,7 +36,7 @@ class OnePhotoOrAlbumCase(object):
         self.assertTrue(self.instance)
 
     def test_instance_pk(self):
-        """Test that newly created User's profile has a primary key."""
+        """Test that new Album or Photo has an integer primary key."""
         self.assertIsInstance(self.instance.pk, int)
         self.assertTrue(self.instance.pk)
 
@@ -48,9 +48,17 @@ class OnePhotoOrAlbumCase(object):
         """Check that instance has its description attribute."""
         self.assertTrue(self.instance.description)
 
-    def test_user(self):
+    def test_owner(self):
         """Test that owner attr of Photo or Album is established User."""
         self.assertIs(self.instance.owner, self.user)
+
+    def test_instance_has_mod_date(self):
+        """Check that photo date_modified is a datetime before now."""
+        self.assertGreater(timezone.now(), self.instance.date_modified)
+
+    def test_instance_has_pub_date(self):
+        """Check that photo date_modified is a datetime before now."""
+        self.assertGreater(timezone.now(), self.instance.date_published)
 
 
 class OnePhotoCase(OneUserCase, OnePhotoOrAlbumCase):
