@@ -15,16 +15,20 @@ class UserFactory(factory.django.DjangoModelFactory):
 
         model = settings.AUTH_USER_MODEL
 
+    first_name = factory.Faker('first_name')
+    last_name = factory.Faker('last_name')
+    username = factory.LazyAttribute(
+        lambda obj: ''.join((obj.first_name, obj.last_name)))
+    email = factory.LazyAttribute(
+        lambda obj: '{}@example.com'.format(obj.username))
+
 
 class OneUserCase(TestCase):
     """Inheritable base case setting up one User."""
 
     def setUp(self):
         """Set up User models for testing."""
-        self.user = UserFactory.create(
-            username='testuser',
-            email='testuser@example.com',
-        )
+        self.user = UserFactory.create()
         self.user.set_password('secret')
 
 
@@ -80,4 +84,3 @@ class BasicUserProfileCase(OneUserCase):
         """Test that counting the active manager returns expected int."""
         self.assertEqual(ImagerProfile.active.count(), 1)
 
-# Add tsts for multiple Users; multiple active users
