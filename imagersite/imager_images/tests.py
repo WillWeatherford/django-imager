@@ -7,8 +7,8 @@ from imager_profile.tests import UserFactory
 import factory
 import random
 
-PHOTO_TEST_BATCH_SIZE = 20
-ALBUM_TEST_BATCH_SIZE = 5
+PHOTO_BATCH_SIZE = 20
+ALBUM_BATCH_SIZE = 5
 
 
 class PhotoFactory(factory.django.DjangoModelFactory):
@@ -111,14 +111,14 @@ class ManyPhotosOneAlbumCase(TestCase):
         """Add one Album  and many Photos to the database for testing."""
         owner = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
-            PHOTO_TEST_BATCH_SIZE,
+            PHOTO_BATCH_SIZE,
             owner=owner)
         self.album = AlbumFactory.create(owner=owner)
         self.album.add_photos(self.photo_batch)
 
     def test_correct_photo_batch_size(self):
         """Test that batch of created photos are as many as expected."""
-        self.assertEqual(len(self.album.photos.all()), PHOTO_TEST_BATCH_SIZE)
+        self.assertEqual(len(self.album.photos.all()), PHOTO_BATCH_SIZE)
 
     def test_photo_owner(self):
         """Test that user attr of all Photos is same User as Album."""
@@ -156,10 +156,10 @@ class ManyPhotosManyAlbumsCase(TestCase):
         """Add many Photos to the database for testing."""
         owner = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
-            PHOTO_TEST_BATCH_SIZE,
+            PHOTO_BATCH_SIZE,
             owner=owner)
         self.album_batch = AlbumFactory.create_batch(
-            ALBUM_TEST_BATCH_SIZE,
+            ALBUM_BATCH_SIZE,
             owner=owner)
         for album in self.album_batch:
             album.add_photos(self.photo_batch)
@@ -173,7 +173,7 @@ class ManyPhotosManyAlbumsCase(TestCase):
     def test_correct_album_batch_size(self):
         """Test that batch of created photos are as many as expected."""
         photo = self.photo_batch[0]
-        self.assertEqual(len(list(photo.albums.all())), ALBUM_TEST_BATCH_SIZE)
+        self.assertEqual(len(list(photo.albums.all())), ALBUM_BATCH_SIZE)
 
     def test_album_photo_owner(self):
         """Test that all albums and photos have the same owner."""

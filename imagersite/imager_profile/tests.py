@@ -7,7 +7,7 @@ from .models import ImagerProfile
 import random
 import factory
 
-USER_TEST_BATCH_SIZE = 40
+USER_BATCH_SIZE = 40
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -33,7 +33,6 @@ class OneUserCase(TestCase):
     def setUp(self):
         """Set up User models for testing."""
         self.user = UserFactory.create()
-        # self.user.set_password('secret')
 
 
 class DeletedUserCase(OneUserCase):
@@ -97,10 +96,14 @@ class ManyUsersCase(TestCase):
 
     def setUp(self):
         """Add many Users to the test."""
-        self.user_batch = UserFactory.create_batch(USER_TEST_BATCH_SIZE)
+        self.user_batch = UserFactory.create_batch(USER_BATCH_SIZE)
 
     def test_active_count(self):
         """Make sure that the active user count is the expected size."""
-        self.assertEqual(ImagerProfile.active.count(), USER_TEST_BATCH_SIZE)
+        self.assertEqual(ImagerProfile.active.count(), USER_BATCH_SIZE)
 
-    # def 
+    def test_many_deleted(self):
+        """Test that active.count is modified when deleting multiple users."""
+        for user in random.sample(self.user_batch, USER_BATCH_SIZE // 2):
+            user.delete()
+        self.assertEqual(ImagerProfile.active.count(), USER_BATCH_SIZE // 2)
