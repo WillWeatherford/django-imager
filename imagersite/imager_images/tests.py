@@ -100,6 +100,10 @@ class OneAlbumCase(OneUserCase, OnePhotoOrAlbumCase):
         """Check that Album initializes with no photos."""
         self.assertFalse(self.instance.photos.count())
 
+    def test_init_no_cover(self):
+        """Check that Album initializes with no cover photo."""
+        self.assertIs(self.instance.cover, None)
+
     def test_album_has_created_date(self):
         """Check that album date_created is a datetime before now."""
         self.assertGreater(timezone.now(), self.instance.date_created)
