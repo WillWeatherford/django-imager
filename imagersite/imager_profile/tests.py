@@ -56,7 +56,6 @@ class DeletedUserCase(OneUserCase):
         self.assertFalse(ImagerProfile.active.count())
 
 
-# Add tests manipulating profile attributes
 class BasicUserProfileCase(OneUserCase):
     """Simple test case for Photos."""
 

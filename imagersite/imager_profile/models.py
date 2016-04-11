@@ -23,7 +23,7 @@ class ImagerProfile(md.Model):
 
     def __str__(self):
         """String output of ImagerProfile model."""
-        return "Imager profile for User: {}".format(self.user.username)
+        return "Imager profile for {}".format(self.user)
 
     def __repr__(self):
         """Command line interface representation of ImagerProfile model."""
