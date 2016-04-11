@@ -13,7 +13,7 @@ class Photo(md.Model):
     owner = md.ForeignKey(settings.AUTH_USER_MODEL,
                           related_name='photos',
                           default=None)
-    # albums = md.ManyToManyField(Album, related_name='photos')
+    albums = md.ManyToManyField('Album')
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_uploaded = md.DateTimeField(auto_now_add=True)
@@ -29,7 +29,7 @@ class Album(md.Model):
 
     owner = md.ForeignKey(settings.AUTH_USER_MODEL,
                           related_name='albums')
-    # photos = md.ManyToManyField(Photo, related_name='albums')
+    photos = md.ManyToManyField('Photo')
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)
