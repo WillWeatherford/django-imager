@@ -11,8 +11,7 @@ class Photo(md.Model):
     """Represents a single image in the database."""
 
     owner = md.ForeignKey(settings.AUTH_USER_MODEL,
-                          related_name='photos',
-                          default=None)
+                          related_name='photos')
     albums = md.ManyToManyField('Album', related_name='photos')
     title = md.CharField(max_length=255)
     description = md.TextField()
@@ -29,7 +28,6 @@ class Album(md.Model):
 
     owner = md.ForeignKey(settings.AUTH_USER_MODEL,
                           related_name='albums')
-    # photos = md.ManyToManyField('Photo')
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)
