@@ -56,6 +56,12 @@ class Album(md.Model):
 
     def set_cover(self, photo):
         """Set provided photo as the cover for this album."""
+        if photo.owner is not self.owner:
+            raise PermissionError('{} is not owned by {}.'.format(
+                photo, self.owner))
+        if photo not in self.photos.all():
+            raise KeyError('{} is not in {}, so it cannot be the cover photo.'
+                           ''.format(photo, self.title))
         self.cover = photo
         self.save()
 
@@ -76,4 +82,4 @@ class Album(md.Model):
     def remove_photo(self):
         pass
 
-# The albums created by a user may contain only Photos created by that same user.
+

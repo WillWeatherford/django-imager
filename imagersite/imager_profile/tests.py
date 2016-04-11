@@ -19,10 +19,9 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
+    email = factory.Faker('email')
     username = factory.LazyAttribute(
         lambda obj: ''.join((obj.first_name, obj.last_name)))
-    email = factory.LazyAttribute(
-        lambda obj: '{}@example.com'.format(obj.username))
 
 
 class OneUserCase(TestCase):
