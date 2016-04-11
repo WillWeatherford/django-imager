@@ -41,14 +41,19 @@ class Album(md.Model):
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)
 
-    def set_cover(self):
-        pass
+    def set_cover(self, photo):
+        """Set provided photo as the cover for this album."""
+        self.cover = photo
+        self.save()
 
-    def add_photo(self):
-        pass
-
-    def add_photos(self):
-        pass
+    def add_photos(self, photos):
+        """Set this album on the relationship to all photos in iterable."""
+        for photo in photos:
+            if photo.owner is self.owner:
+                photo.albums.add(self)
+                photo.save()
+                if self.cover is None:
+                    self.set_cover(photo)
 
     def remove_photo(self):
         pass

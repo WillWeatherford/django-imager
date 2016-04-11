@@ -65,7 +65,7 @@ class OnePhotoCase(OneUserCase, OnePhotoOrAlbumCase):
     """Test case for a single Photo."""
 
     def setUp(self):
-        """Add one Photo to the database for testing."""
+        """Add one Album to the database for testing."""
         super(OnePhotoCase, self).setUp()
 
         self.instance = PhotoFactory.create(
@@ -93,7 +93,7 @@ class OneAlbumCase(OneUserCase, OnePhotoOrAlbumCase):
         )
 
     def test_album_has_created_date(self):
-        """Check that photo uploaded_date is a datetime before now."""
+        """Check that album date_created is a datetime before now."""
         self.assertGreater(timezone.now(), self.instance.date_created)
 
 
@@ -134,3 +134,12 @@ class MultiPhotosAndAlbumsCase(OneUserCase):
         """Test that user attr of all Photos is established User."""
         for album in self.album_batch:
             self.assertIs(album.owner, self.user)
+
+    def test_set_one_album(self):
+        """Test that photo batch  added to album have correct relationship."""
+        album = self.album_batch[0]
+        album.add_photos(self.photo_batch)
+        for photo in self.photo_batch:
+            self.assertIn(album, photo.albums.all())
+            self.assertIn(photo, album.photos.all())
+
