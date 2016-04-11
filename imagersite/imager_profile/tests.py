@@ -6,6 +6,7 @@ from django.db.models import QuerySet, Manager
 from .models import ImagerProfile
 import factory
 
+USER_TEST_BATCH_SIZE = 40
 
 class UserFactory(factory.django.DjangoModelFactory):
     """Factory for User model in tests."""
@@ -53,6 +54,7 @@ class DeletedUserCase(OneUserCase):
         self.assertFalse(ImagerProfile.active.count())
 
 
+# Add tests manipulating profile attributes
 class BasicUserProfileCase(OneUserCase):
     """Simple test case for Photos."""
 
@@ -86,3 +88,10 @@ class BasicUserProfileCase(OneUserCase):
         """Test that counting the active manager returns expected int."""
         self.assertEqual(ImagerProfile.active.count(), 1)
 
+
+class ManyUsersCase(TestCase):
+    """Test cases where many Users are registered."""
+
+    def setUp(self):
+        """Add many Users to the test."""
+        self.user_batch = UserFactory.create_batch(USER_TEST_BATCH_SIZE)
