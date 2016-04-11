@@ -17,6 +17,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class OneUserCase(TestCase):
+    """Inheritable base case setting up one User."""
 
     def setUp(self):
         """Set up User models for testing."""
