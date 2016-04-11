@@ -5,6 +5,7 @@ from django.conf import settings
 PUB_CHOICES = ['private', 'shared', 'public']
 PUB_DEFAULT = PUB_CHOICES[0]
 PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
+DATE_FORMAT = '%d %B %Y %I:%M%p'
 
 
 class Photo(md.Model):
@@ -26,14 +27,14 @@ class Photo(md.Model):
         """String output of Photo instance."""
         return "{}... ({})".format(
             self.title[:20],
-            self.date_published.strftime())
+            self.date_published.strftime(DATE_FORMAT))
 
     def __repr__(self):
         """Command line representation of Photo instance."""
         return "Photo(title={}, owner={}, date_published={}".format(
             self.title[:20],
             self.owner,
-            self.date_published.strftime())
+            self.date_published.strftime(DATE_FORMAT))
 
 
 class Album(md.Model):
@@ -56,7 +57,7 @@ class Album(md.Model):
 
     def set_cover(self, photo):
         """Set provided photo as the cover for this album."""
-        if photo.owner is not self.owner:
+        if photo.owner != self.owner:
             raise PermissionError('{} is not owned by {}.'.format(
                 photo, self.owner))
         if photo not in self.photos.all():

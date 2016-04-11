@@ -116,6 +116,7 @@ class ManyPhotosOneAlbumCase(TestCase):
     def setUp(self):
         """Add one Album  and many Photos to the database for testing."""
         self.user = UserFactory.create()
+        self.user.set_password('secret')
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_TEST_BATCH_SIZE,
             owner=self.user)
@@ -131,11 +132,28 @@ class ManyPhotosOneAlbumCase(TestCase):
         for photo in self.photo_batch:
             self.assertIs(photo.owner, self.album.owner)
 
+    def test_photos_owner(self):
+        """Test that user attr of album.photos is same User as album."""
+        for photo in self.album.photos.all():
+            self.assertEqual(photo.owner, self.album.owner)
+
     def test_album_photos_relationship(self):
         """Test that photo batch  added to album have correct relationship."""
         for photo in self.photo_batch:
             self.assertIn(self.album, photo.albums.all())
             self.assertIn(photo, self.album.photos.all())
+
+    def test_cover_photo_auto_set(self):
+        """Test that a cover photo is set when photos have been added."""
+        self.assertIsNotNone(self.album.cover)
+
+    def test_cover_photo_manual_set(self):
+        """Test that a cover photo can be manually set."""
+        old_cover = self.album.cover
+        new_cover = list(self.album.photos.all())[-1]
+        self.album.set_cover(new_cover)
+        self.assertIsNot(self.album.cover, old_cover)
+        self.assertIs(self.album.cover, new_cover)
 
 
 class ManyPhotosManyAlbumsCase(TestCase):
@@ -153,21 +171,36 @@ class ManyPhotosManyAlbumsCase(TestCase):
         for album in self.album_batch:
             album.add_photos(self.photo_batch)
 
+    def gen_album_photo_comb(self):
+        """Generate all album and photo combinations iteratively."""
+        for album in self.album_batch:
+            for photo in self.photo_batch:
+                yield album, photo
+
     def test_correct_album_batch_size(self):
         """Test that batch of created photos are as many as expected."""
-        self.assertEqual(len(self.album_batch), ALBUM_TEST_BATCH_SIZE)
+        photo = self.photo_batch[0]
+        self.assertEqual(len(list(photo.albums.all())), ALBUM_TEST_BATCH_SIZE)
 
     def test_album_owner(self):
         """Test that user attr of all Photos is established User."""
         for album in self.album_batch:
             self.assertIs(album.owner, self.user)
 
-    def test_multi_albums(self):
-        """Test that photos can be in multiple albums."""
+    def test_album_photo_owner(self):
+        """Test that all albums and photos have the same owner."""
+        for album, photo in self.gen_album_photo_comb():
+            self.assertIs(album.owner, photo.owner)
+
+    def test_multi_album(self):
+        """Test that photos are in multiple albums, and vice versa."""
         for album in self.album_batch:
             self.assertEqual(list(album.photos.all()), self.photo_batch)
         for photo in self.photo_batch:
             self.assertEqual(list(photo.albums.all()), self.album_batch)
 
-    def test_default_set_cover_photo(self):
-        """Test that a photo can be set as cover."""
+    def test_albums_in_photos_in_albums(self):
+        """Test that all albums and photos are in each other."""
+        for album, photo in self.gen_album_photo_comb():
+            self.assertIn(album, photo.albums.all())
+            self.assertIn(photo, album.photos.all())
