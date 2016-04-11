@@ -58,7 +58,7 @@ class Album(md.Model):
     def set_cover(self, photo):
         """Set provided photo as the cover for this album."""
         if photo.owner != self.owner:
-            raise PermissionError('{} is not owned by {}.'.format(
+            raise ValueError('{} is not owned by {}.'.format(
                 photo, self.owner))
         if photo not in self.photos.all():
             raise KeyError('{} is not in {}, so it cannot be the cover photo.'

@@ -148,6 +148,18 @@ class ManyPhotosOneAlbumCase(TestCase):
         self.assertIsNot(self.album.cover, old_cover)
         self.assertIs(self.album.cover, new_cover)
 
+    def test_cover_not_same_owner(self):
+        """Test that a cover photo can be manually set."""
+        new_photo = PhotoFactory()
+        with self.assertRaises(ValueError):
+            self.album.set_cover(new_photo)
+
+    def test_cover_not_same_album(self):
+        """Test that a cover photo can be manually set."""
+        new_photo = PhotoFactory(owner=self.album.owner)
+        with self.assertRaises(KeyError):
+            self.album.set_cover(new_photo)
+
 
 class ManyPhotosManyAlbumsCase(TestCase):
     """Test case using many Photo and Album instances."""
@@ -195,4 +207,3 @@ class ManyPhotosManyAlbumsCase(TestCase):
 
 
 # Test with multi owners - no overlap of photo sets
-# Test error raised when trying to set cover wrong
