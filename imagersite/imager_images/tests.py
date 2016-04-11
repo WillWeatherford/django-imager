@@ -1,9 +1,9 @@
 """Test that Photo and Album models work as expected."""
 from __future__ import unicode_literals
-# from django.test import TestCase
+from django.test import TestCase
 from django.utils import timezone
 from .models import Photo, Album
-from imager_profile.tests import OneUserCase
+from imager_profile.tests import UserFactory
 import factory
 
 PHOTO_TEST_BATCH_SIZE = 20
@@ -18,6 +18,10 @@ class PhotoFactory(factory.django.DjangoModelFactory):
 
         model = Photo
 
+    title = factory.Faker('sentence')
+    description = factory.Faker('text')
+    published = 'private'
+
 
 class AlbumFactory(factory.django.DjangoModelFactory):
     """Creates Album models for testing."""
@@ -26,6 +30,10 @@ class AlbumFactory(factory.django.DjangoModelFactory):
         """Assign Album model as product of factory."""
 
         model = Album
+
+    title = factory.Faker('sentence')
+    description = factory.Faker('text')
+    published = 'private'
 
 
 class OnePhotoOrAlbumCase(object):
@@ -61,18 +69,13 @@ class OnePhotoOrAlbumCase(object):
         self.assertGreater(timezone.now(), self.instance.date_published)
 
 
-class OnePhotoCase(OneUserCase, OnePhotoOrAlbumCase):
+class OnePhotoCase(TestCase, OnePhotoOrAlbumCase):
     """Test case for a single Photo."""
 
     def setUp(self):
-        """Add one Album to the database for testing."""
-        super(OnePhotoCase, self).setUp()
-
-        self.instance = PhotoFactory.create(
-            owner=self.user,
-            title='Test title',
-            description='Test description',
-        )
+        """Add one Photo to the database for testing."""
+        self.user = UserFactory.create()
+        self.instance = PhotoFactory.create(owner=self.user)
 
     def test_photo_has_up_date(self):
         """Check that photo uploaded_date is a datetime before now."""
@@ -83,18 +86,13 @@ class OnePhotoCase(OneUserCase, OnePhotoOrAlbumCase):
         self.assertFalse(self.instance.albums.count())
 
 
-class OneAlbumCase(OneUserCase, OnePhotoOrAlbumCase):
+class OneAlbumCase(TestCase, OnePhotoOrAlbumCase):
     """Test case for a single Album."""
 
     def setUp(self):
-        """Add one Photo to the database for testing."""
-        super(OneAlbumCase, self).setUp()
-
-        self.instance = AlbumFactory.create(
-            owner=self.user,
-            title='Test title',
-            description='Test description',
-        )
+        """Add one Album to the database for testing."""
+        self.user = UserFactory.create()
+        self.instance = AlbumFactory.create(owner=self.user)
 
     def test_init_no_photos(self):
         """Check that Album initializes with no photos."""
@@ -109,25 +107,18 @@ class OneAlbumCase(OneUserCase, OnePhotoOrAlbumCase):
         self.assertGreater(timezone.now(), self.instance.date_created)
 
 
-class MultiPhotosAndAlbumsCase(OneUserCase):
+class MultiPhotosAndAlbumsCase(TestCase):
     """Test case using many Photo instances."""
 
     def setUp(self):
         """Add many Photos to the database for testing."""
-        super(MultiPhotosAndAlbumsCase, self).setUp()
-
+        self.user = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_TEST_BATCH_SIZE,
-            owner=self.user,
-            title='Test title',
-            description='Test description',
-        )
+            owner=self.user)
         self.album_batch = AlbumFactory.create_batch(
             ALBUM_TEST_BATCH_SIZE,
-            owner=self.user,
-            title='Test title',
-            description='Test description',
-        )
+            owner=self.user)
 
     def test_correct_photo_batch_size(self):
         """Test that batch of created photos are as many as expected."""

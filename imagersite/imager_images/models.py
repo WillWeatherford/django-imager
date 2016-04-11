@@ -5,7 +5,7 @@ from django.conf import settings
 PUB_CHOICES = ['private', 'shared', 'public']
 PUB_DEFAULT = PUB_CHOICES[0]
 PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
-TIME_FORMAT = ''
+
 
 class Photo(md.Model):
     """Represents a single image in the database."""

@@ -8,6 +8,7 @@ import factory
 
 USER_TEST_BATCH_SIZE = 40
 
+
 class UserFactory(factory.django.DjangoModelFactory):
     """Factory for User model in tests."""
 
