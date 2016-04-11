@@ -79,8 +79,3 @@ class Album(md.Model):
             photo.save()
             if self.cover is None:
                 self.set_cover(photo)
-
-    def remove_photo(self):
-        pass
-
-

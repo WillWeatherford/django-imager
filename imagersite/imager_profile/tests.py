@@ -95,3 +95,5 @@ class ManyUsersCase(TestCase):
     def setUp(self):
         """Add many Users to the test."""
         self.user_batch = UserFactory.create_batch(USER_TEST_BATCH_SIZE)
+
+# Test deactivating some of many users.

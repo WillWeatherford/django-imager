@@ -204,3 +204,7 @@ class ManyPhotosManyAlbumsCase(TestCase):
         for album, photo in self.gen_album_photo_comb():
             self.assertIn(album, photo.albums.all())
             self.assertIn(photo, album.photos.all())
+
+
+# Test with multi owners - no overlap of photo sets
+# Test error raised when trying to set cover wrong
