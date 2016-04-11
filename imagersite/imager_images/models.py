@@ -5,7 +5,7 @@ from django.conf import settings
 PUB_CHOICES = ['private', 'shared', 'public']
 PUB_DEFAULT = PUB_CHOICES[0]
 PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
-
+TIME_FORMAT = ''
 
 class Photo(md.Model):
     """Represents a single image in the database."""
@@ -21,6 +21,19 @@ class Photo(md.Model):
     published = md.CharField(max_length=255,
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)
+
+    def __str__(self):
+        """String output of Photo instance."""
+        return "{}... ({})".format(
+            self.title[:20],
+            self.date_published.strftime())
+
+    def __repr__(self):
+        """Command line representation of Photo instance."""
+        return "Photo(title={}, owner={}, date_published={}".format(
+            self.title[:20],
+            self.owner,
+            self.date_published.strftime())
 
 
 class Album(md.Model):
@@ -46,14 +59,19 @@ class Album(md.Model):
         self.cover = photo
         self.save()
 
-    def add_photos(self, photos):
-        """Set this album on the relationship to all photos in iterable."""
+    def _owned_photos(self, photos):
+        """Generate only photos owned by the owner of the album."""
         for photo in photos:
             if photo.owner is self.owner:
-                photo.albums.add(self)
-                photo.save()
-                if self.cover is None:
-                    self.set_cover(photo)
+                yield photo
+
+    def add_photos(self, photos):
+        """Set this album on the relationship to all photos in iterable."""
+        for photo in self._owned_photos(photos):
+            photo.albums.add(self)
+            photo.save()
+            if self.cover is None:
+                self.set_cover(photo)
 
     def remove_photo(self):
         pass

@@ -78,6 +78,10 @@ class OnePhotoCase(OneUserCase, OnePhotoOrAlbumCase):
         """Check that photo uploaded_date is a datetime before now."""
         self.assertGreater(timezone.now(), self.instance.date_uploaded)
 
+    def test_init_no_albums(self):
+        """Check that Photo initializes with no albums."""
+        self.assertFalse(self.instance.albums.count())
+
 
 class OneAlbumCase(OneUserCase, OnePhotoOrAlbumCase):
     """Test case for a single Album."""
@@ -91,6 +95,10 @@ class OneAlbumCase(OneUserCase, OnePhotoOrAlbumCase):
             title='Test title',
             description='Test description',
         )
+
+    def test_init_no_photos(self):
+        """Check that Album initializes with no photos."""
+        self.assertFalse(self.instance.photos.count())
 
     def test_album_has_created_date(self):
         """Check that album date_created is a datetime before now."""
@@ -143,3 +151,10 @@ class MultiPhotosAndAlbumsCase(OneUserCase):
             self.assertIn(album, photo.albums.all())
             self.assertIn(photo, album.photos.all())
 
+    def test_multi_albums(self):
+        """Test that photos can be in multiple albums."""
+        for album in self.album_batch:
+            album.add_photos(self.photo_batch)
+            self.assertEqual(list(album.photos.all()), self.photo_batch)
+        for photo in self.photo_batch:
+            self.assertEqual(list(photo.albums.all()), self.album_batch)
