@@ -7,8 +7,9 @@ from imager_profile.tests import UserFactory
 import factory
 import random
 
-PHOTO_BATCH_SIZE = 20
-ALBUM_BATCH_SIZE = 5
+PHOTO_BATCH_SIZE = 40
+ALBUM_BATCH_SIZE = 10
+USER_BATCH_SIZE = 5
 
 
 class PhotoFactory(factory.django.DjangoModelFactory):
@@ -205,5 +206,21 @@ class ManyPhotosManyAlbumsCase(TestCase):
             self.assertIn(album, photo.albums.all())
             self.assertIn(photo, album.photos.all())
 
+
+class ManyPhotosManyAlbumsManyUsersCase(TestCase):
+    """Establish full system test with many of each model."""
+
+    def setUp(self):
+        """Add many Photos to the database for testing."""
+        self.owner_batch = UserFactory.create_batch(USER_BATCH_SIZE)
+        for owner in self.owner_batch:
+            photo_batch = PhotoFactory.create_batch(
+                PHOTO_BATCH_SIZE // USER_BATCH_SIZE,
+                owner=owner)
+            album_batch = AlbumFactory.create_batch(
+                ALBUM_BATCH_SIZE // USER_BATCH_SIZE,
+                owner=owner)
+            for album in album_batch:
+                album.add_photos(photo_batch)
 
 # Test with multi owners - no overlap of photo sets
