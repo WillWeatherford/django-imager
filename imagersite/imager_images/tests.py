@@ -79,3 +79,6 @@ class MultiPhotoCase(OneUserCase):
         """Test that user attr of all Photos is established User."""
         for photo in self.photo_batch:
             self.assertIs(photo.user, self.user)
+
+
+# class OneAlbumCase()
