@@ -13,7 +13,7 @@ DATE_FORMAT = '%d %B %Y %I:%M%p'
 class Photo(md.Model):
     """Represents a single image in the database."""
 
-    owner = md.ForeignKey(settings.AUTH_USER_MODEL,
+    owner = md.ForeignKey(settings.AUTH_USER_MODEL, on_delete=md.CASCADE,
                           related_name='photos')
     albums = md.ManyToManyField('Album', related_name='photos')
     img_file = md.ImageField(upload_to='img_files')
@@ -41,11 +41,10 @@ class Photo(md.Model):
 class Album(md.Model):
     """Represents a collection of images in the database."""
 
-    owner = md.ForeignKey(settings.AUTH_USER_MODEL,
+    owner = md.ForeignKey(settings.AUTH_USER_MODEL, on_delete=md.CASCADE,
                           related_name='albums')
-    cover = md.ForeignKey('Photo',
-                          related_name='covered_albums',
-                          null=True,
+    cover = md.ForeignKey('Photo', on_delete=md.CASCADE,
+                          related_name='covered_albums', null=True,
                           default=None)
     title = md.CharField(max_length=255)
     description = md.TextField()

@@ -12,8 +12,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# Will this create a new ImagerProfile after user has been edited?
-# Or is User only ever saved once, when first created?
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def ensure_imager_profile(sender, **kwargs):
     """Create and save an ImagerProfile after every new User is created."""
