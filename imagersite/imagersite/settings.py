@@ -77,11 +77,8 @@ WSGI_APPLICATION = 'imagersite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-try:
-    password = os.environ['DATABASE_PASSWORD']
-except KeyError:
-    print('Database password has not been set in global environ.')
-    sys.exit()
+
+password = os.environ.get('DATABASE_PASSWORD', '')
 
 DATABASES = {
     'default': {
