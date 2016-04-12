@@ -17,6 +17,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         """Establish User model as the product of this factory."""
 
         model = settings.AUTH_USER_MODEL
+        django_get_or_create = ('username',)
 
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')

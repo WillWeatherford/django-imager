@@ -69,7 +69,7 @@ class Album(md.Model):
     def _owned_photos(self, photos):
         """Generate only photos owned by the owner of the album."""
         for photo in photos:
-            if photo.owner is self.owner:
+            if photo.owner == self.owner:
                 yield photo
 
     def add_photos(self, photos):

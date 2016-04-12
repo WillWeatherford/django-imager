@@ -23,7 +23,7 @@ class PhotoFactory(factory.django.DjangoModelFactory):
     title = factory.Faker('sentence')
     description = factory.Faker('text')
     published = random.choice(PUB_CHOICES)
-    owner = factory.SubFactory(UserFactory)
+    owner = factory.SubFactory(UserFactory, username='BestUser')
 
 
 class AlbumFactory(factory.django.DjangoModelFactory):
@@ -37,7 +37,7 @@ class AlbumFactory(factory.django.DjangoModelFactory):
     title = factory.Faker('sentence')
     description = factory.Faker('text')
     published = random.choice(PUB_CHOICES)
-    owner = factory.SubFactory(UserFactory)
+    owner = factory.SubFactory(UserFactory, username='BestUser')
 
 
 class OnePhotoOrAlbumCase(object):
@@ -110,11 +110,12 @@ class ManyPhotosOneAlbumCase(TestCase):
 
     def setUp(self):
         """Add one Album  and many Photos to the database for testing."""
-        owner = UserFactory.create()
+        # owner = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_BATCH_SIZE,
-            owner=owner)
-        self.album = AlbumFactory.create(owner=owner)
+            # owner=owner
+            )
+        self.album = AlbumFactory.create()  # owner=owner)
         self.album.add_photos(self.photo_batch)
 
     def test_correct_photo_batch_size(self):
@@ -124,7 +125,7 @@ class ManyPhotosOneAlbumCase(TestCase):
     def test_photo_owner(self):
         """Test that user attr of all Photos is same User as Album."""
         for photo in self.photo_batch:
-            self.assertIs(photo.owner, self.album.owner)
+            self.assertEqual(photo.owner, self.album.owner)
 
     def test_photos_owner(self):
         """Test that user attr of album.photos is same User as album."""
@@ -151,7 +152,7 @@ class ManyPhotosOneAlbumCase(TestCase):
 
     def test_cover_not_same_owner(self):
         """Test that a cover photo can be manually set."""
-        new_photo = PhotoFactory()
+        new_photo = PhotoFactory(owner=UserFactory(username='OtherGuy'))
         with self.assertRaises(ValueError):
             self.album.set_cover(new_photo)
 
@@ -212,8 +213,10 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
 
     def setUp(self):
         """Add many Photos to the database for testing."""
-        self.owner_batch = UserFactory.create_batch(USER_BATCH_SIZE)
-        for owner in self.owner_batch:
+        self.user_batch = UserFactory.create_batch(USER_BATCH_SIZE)
+        self.photo_batch = []
+        self.album_batch = []
+        for owner in self.user_batch:
             photo_batch = PhotoFactory.create_batch(
                 PHOTO_BATCH_SIZE // USER_BATCH_SIZE,
                 owner=owner)
@@ -222,5 +225,25 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
                 owner=owner)
             for album in album_batch:
                 album.add_photos(photo_batch)
+            self.photo_batch.extend(photo_batch)
+            self.album_batch.extend(album_batch)
+
+    def test_all_owners_photos_size(self):
+        """Test that all users have the expected number of photos."""
+        for user in self.user_batch:
+            self.assertEqual(user.photos.count(),
+                             PHOTO_BATCH_SIZE // USER_BATCH_SIZE)
+
+    def test_all_owners_albums_size(self):
+        """Test that all users have the expected number of albums."""
+        for user in self.user_batch:
+            self.assertEqual(user.albums.count(),
+                             ALBUM_BATCH_SIZE // USER_BATCH_SIZE)
+
+    # def test
+
+    # Test adding a non-owned photo into own album -- raise valueerror
+    # All owner's albums are not owned by anyone else
+    # all owner's photos are not owned by anyone else
 
 # Test with multi owners - no overlap of photo sets
