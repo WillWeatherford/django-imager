@@ -241,10 +241,10 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
             album_batch = AlbumFactory.create_batch(
                 ALBUM_BATCH_SIZE // USER_BATCH_SIZE,
                 owner=owner)
-            for album in album_batch:
-                album.add_photos(photo_batch)
             self.photo_batch.extend(photo_batch)
             self.album_batch.extend(album_batch)
+        for album in album_batch:
+            album.add_photos(self.photo_batch)
 
     def test_all_owners_photos_size(self):
         """Test that all users have the expected number of photos."""
