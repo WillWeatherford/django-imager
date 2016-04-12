@@ -37,7 +37,7 @@ setup(name='Django Imager',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      # test_suite='',
+      test_suite='django-imager',
       install_requires=REQUIRES,
       extras_require={
           'test': TEST,
