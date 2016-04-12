@@ -1,16 +1,17 @@
 """Test that Photo and Album models work as expected."""
 from __future__ import unicode_literals
-from django.test import TestCase
+from django.db.models.fields.files import ImageFieldFile
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from .models import Photo, Album, PUB_CHOICES
 from imager_profile.tests import UserFactory
-from django.db.models.fields.files import ImageFieldFile
 import factory
 import random
 
-PHOTO_BATCH_SIZE = 40
+PHOTO_BATCH_SIZE = 20
 ALBUM_BATCH_SIZE = 10
 USER_BATCH_SIZE = 5
+TMP_MEDIA_ROOT = '/tmp/media/'
 
 
 class PhotoFactory(factory.django.DjangoModelFactory):
@@ -71,6 +72,7 @@ class OnePhotoOrAlbumCase(object):
         self.assertGreater(timezone.now(), self.instance.date_published)
 
 
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class OnePhotoCase(TestCase, OnePhotoOrAlbumCase):
     """Test case for a single Photo."""
 
@@ -90,7 +92,12 @@ class OnePhotoCase(TestCase, OnePhotoOrAlbumCase):
         """Check that img_file exists."""
         self.assertTrue(self.instance.img_file)
 
+    def test_img_file_type(self):
+        """Check that img_file exists."""
+        self.assertIsInstance(self.instance.img_file, ImageFieldFile)
 
+
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class OneAlbumCase(TestCase, OnePhotoOrAlbumCase):
     """Test case for a single Album."""
 
@@ -111,6 +118,7 @@ class OneAlbumCase(TestCase, OnePhotoOrAlbumCase):
         self.assertGreater(timezone.now(), self.instance.date_created)
 
 
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class ManyPhotosOneAlbumCase(TestCase):
     """Test case using many Photo instances and one Album."""
 
@@ -165,6 +173,7 @@ class ManyPhotosOneAlbumCase(TestCase):
             self.album.set_cover(new_photo)
 
 
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class ManyPhotosManyAlbumsCase(TestCase):
     """Test case using many Photo and Album instances."""
 
@@ -212,6 +221,7 @@ class ManyPhotosManyAlbumsCase(TestCase):
             self.assertIn(photo, album.photos.all())
 
 
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class ManyPhotosManyAlbumsManyUsersCase(TestCase):
     """Establish full system test with many of each model."""
 
