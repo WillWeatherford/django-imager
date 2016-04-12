@@ -18,10 +18,12 @@ class ImagerProfile(md.Model):
     """Profile attached to User model by one-to-one relationship."""
 
     user = md.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
-    active = ActiveManager()
     location = md.CharField(default='', max_length=255)
     camera = md.CharField(default='', max_length=255)
     fav_photo = md.CharField(default='', max_length=255)
+
+    objects = md.Manager()
+    active = ActiveManager()
 
     def __str__(self):
         """String output of ImagerProfile model."""
