@@ -110,12 +110,8 @@ class ManyPhotosOneAlbumCase(TestCase):
 
     def setUp(self):
         """Add one Album  and many Photos to the database for testing."""
-        # owner = UserFactory.create()
-        self.photo_batch = PhotoFactory.create_batch(
-            PHOTO_BATCH_SIZE,
-            # owner=owner
-            )
-        self.album = AlbumFactory.create()  # owner=owner)
+        self.photo_batch = PhotoFactory.create_batch(PHOTO_BATCH_SIZE)
+        self.album = AlbumFactory.create()
         self.album.add_photos(self.photo_batch)
 
     def test_correct_photo_batch_size(self):
@@ -168,15 +164,8 @@ class ManyPhotosManyAlbumsCase(TestCase):
 
     def setUp(self):
         """Add many Photos to the database for testing."""
-        # owner = UserFactory.create()
-        self.photo_batch = PhotoFactory.create_batch(
-            PHOTO_BATCH_SIZE,
-            # owner=owner
-            )
-        self.album_batch = AlbumFactory.create_batch(
-            ALBUM_BATCH_SIZE,
-            # owner=owner
-            )
+        self.photo_batch = PhotoFactory.create_batch(PHOTO_BATCH_SIZE)
+        self.album_batch = AlbumFactory.create_batch(ALBUM_BATCH_SIZE)
         for album in self.album_batch:
             album.add_photos(self.photo_batch)
 
@@ -215,9 +204,9 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
 
     def setUp(self):
         """Add many Photos to the database for testing."""
-        self.user_batch = UserFactory.create_batch(USER_BATCH_SIZE)
         self.photo_batch = []
         self.album_batch = []
+        self.user_batch = UserFactory.create_batch(USER_BATCH_SIZE)
         for owner in self.user_batch:
             photo_batch = PhotoFactory.create_batch(
                 PHOTO_BATCH_SIZE // USER_BATCH_SIZE,
@@ -242,10 +231,24 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
             self.assertEqual(user.albums.count(),
                              ALBUM_BATCH_SIZE // USER_BATCH_SIZE)
 
-    # def test
+    def test_exclusive_album_ownership(self):
+        """Test that each user doesn't own other users' photos."""
+        for user in self.user_batch:
+            other_users = (other_user for other_user in self.user_batch
+                           if other_user != user)
+            for album in user.albums.all():
+                for other_user in other_users:
+                    self.assertNotIn(album, other_user.albums.all())
+
+    def test_exclusive_photo_ownership(self):
+        """Test that each user doesn't own other users' photos."""
+        for user in self.user_batch:
+            other_users = (other_user for other_user in self.user_batch
+                           if other_user != user)
+            for photo in user.photos.all():
+                for other_user in other_users:
+                    self.assertNotIn(photo, other_user.photos.all())
 
     # Test adding a non-owned photo into own album -- raise valueerror
-    # All owner's albums are not owned by anyone else
-    # all owner's photos are not owned by anyone else
 
 # Test with multi owners - no overlap of photo sets
