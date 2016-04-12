@@ -168,13 +168,15 @@ class ManyPhotosManyAlbumsCase(TestCase):
 
     def setUp(self):
         """Add many Photos to the database for testing."""
-        owner = UserFactory.create()
+        # owner = UserFactory.create()
         self.photo_batch = PhotoFactory.create_batch(
             PHOTO_BATCH_SIZE,
-            owner=owner)
+            # owner=owner
+            )
         self.album_batch = AlbumFactory.create_batch(
             ALBUM_BATCH_SIZE,
-            owner=owner)
+            # owner=owner
+            )
         for album in self.album_batch:
             album.add_photos(self.photo_batch)
 
@@ -192,7 +194,7 @@ class ManyPhotosManyAlbumsCase(TestCase):
     def test_album_photo_owner(self):
         """Test that all albums and photos have the same owner."""
         for album, photo in self.gen_album_photo_comb():
-            self.assertIs(album.owner, photo.owner)
+            self.assertEqual(album.owner, photo.owner)
 
     def test_multi_album(self):
         """Test that photos are in multiple albums, and vice versa."""
