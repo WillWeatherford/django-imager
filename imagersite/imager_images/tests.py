@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 from .models import Photo, Album, PUB_CHOICES
 from imager_profile.tests import UserFactory
+from django.db.models.fields.files import ImageFieldFile
 import factory
 import random
 
@@ -24,7 +25,7 @@ class PhotoFactory(factory.django.DjangoModelFactory):
     description = factory.Faker('text')
     published = random.choice(PUB_CHOICES)
     owner = factory.SubFactory(UserFactory, username='BestUser')
-    # factory.django.ImageField
+    img_file = factory.django.ImageField()
 
 
 class AlbumFactory(factory.django.DjangoModelFactory):
@@ -84,6 +85,10 @@ class OnePhotoCase(TestCase, OnePhotoOrAlbumCase):
     def test_init_no_albums(self):
         """Check that Photo initializes with no albums."""
         self.assertFalse(self.instance.albums.count())
+
+    def test_img_file(self):
+        """Check that img_file exists."""
+        self.assertTrue(self.instance.img_file)
 
 
 class OneAlbumCase(TestCase, OnePhotoOrAlbumCase):
@@ -182,7 +187,7 @@ class ManyPhotosManyAlbumsCase(TestCase):
             self.assertEqual(album.photos.count(), PHOTO_BATCH_SIZE)
 
     def test_correct_album_batch_size(self):
-        """Test that batch of created photos are as many as expected."""
+        """Test that batch of created albums are as many as expected."""
         for photo in self.photo_batch:
             self.assertEqual(photo.albums.count(), ALBUM_BATCH_SIZE)
 
