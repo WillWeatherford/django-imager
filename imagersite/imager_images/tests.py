@@ -24,6 +24,7 @@ class PhotoFactory(factory.django.DjangoModelFactory):
     description = factory.Faker('text')
     published = random.choice(PUB_CHOICES)
     owner = factory.SubFactory(UserFactory, username='BestUser')
+    # factory.django.ImageField
 
 
 class AlbumFactory(factory.django.DjangoModelFactory):
@@ -116,7 +117,7 @@ class ManyPhotosOneAlbumCase(TestCase):
 
     def test_correct_photo_batch_size(self):
         """Test that batch of created photos are as many as expected."""
-        self.assertEqual(len(self.album.photos.all()), PHOTO_BATCH_SIZE)
+        self.assertEqual(self.album.photos.count(), PHOTO_BATCH_SIZE)
 
     def test_photo_owner(self):
         """Test that user attr of all Photos is same User as Album."""
@@ -175,10 +176,15 @@ class ManyPhotosManyAlbumsCase(TestCase):
             for photo in self.photo_batch:
                 yield album, photo
 
+    def test_correct_photo_batch_size(self):
+        """Test that batch of created photos are as many as expected."""
+        for album in self.album_batch:
+            self.assertEqual(album.photos.count(), PHOTO_BATCH_SIZE)
+
     def test_correct_album_batch_size(self):
         """Test that batch of created photos are as many as expected."""
-        photo = self.photo_batch[0]
-        self.assertEqual(len(list(photo.albums.all())), ALBUM_BATCH_SIZE)
+        for photo in self.photo_batch:
+            self.assertEqual(photo.albums.count(), ALBUM_BATCH_SIZE)
 
     def test_album_photo_owner(self):
         """Test that all albums and photos have the same owner."""
@@ -188,9 +194,11 @@ class ManyPhotosManyAlbumsCase(TestCase):
     def test_multi_album(self):
         """Test that photos are in multiple albums, and vice versa."""
         for album in self.album_batch:
-            self.assertEqual(list(album.photos.all()), self.photo_batch)
+            for photo in album.photos.all():
+                self.assertIn(photo, self.photo_batch)
         for photo in self.photo_batch:
-            self.assertEqual(list(photo.albums.all()), self.album_batch)
+            for album in photo.albums.all():
+                self.assertIn(album, self.album_batch)
 
     def test_albums_in_photos_in_albums(self):
         """Test that all albums and photos are in each other."""

@@ -28,6 +28,23 @@ class UserFactory(factory.django.DjangoModelFactory):
                                                 'secret')
 
 
+class BuiltUserCase(TestCase):
+    """Single user not saved to database, testing conditions in handlers.py."""
+
+    def setUp(self):
+        """Set up user stub."""
+        self.user = UserFactory.build()
+
+    def test_user_not_saved(self):
+        """Make sure set up user has not been saved yet."""
+        self.assertIsNone(self.user.id)
+
+    def test_init_imager_profile(self):
+        """Make sure set up user has not been saved yet."""
+        profile = ImagerProfile(user=self.user)
+        self.assertIs(profile, self.user.profile)
+
+
 class OneUserCase(TestCase):
     """Inheritable base case setting up one User."""
 
@@ -56,6 +73,10 @@ class DeletedUserCase(OneUserCase):
         """Test that counting the active manager returns expected int."""
         self.assertFalse(ImagerProfile.active.count())
 
+    def test_active_not_contains(self):
+        """Test that counting the active manager returns expected int."""
+        self.assertNotIn(self.user, ImagerProfile.active.all())
+
 
 class BasicUserProfileCase(OneUserCase):
     """Simple test case for Photos."""
@@ -72,11 +93,6 @@ class BasicUserProfileCase(OneUserCase):
     def test_profile_is_active(self):
         """Test that profile of new User is active."""
         self.assertTrue(self.user.profile.is_active)
-
-    def test_profile_is_active_false_2(self):
-        """Test that profile of deactivated User is not active."""
-        self.user.is_active = False
-        self.assertFalse(self.user.profile.is_active)
 
     def test_profile_active_manager(self):
         """Test that active attr is a Manager class."""
