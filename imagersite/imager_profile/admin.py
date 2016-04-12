@@ -1,3 +1,6 @@
-from django.contrib import admin
+"""Register imager_profile models to be available on admin page."""
 
-# Register your models here.
+from django.contrib import admin
+from .models import ImagerProfile
+
+admin.site.register(ImagerProfile)
