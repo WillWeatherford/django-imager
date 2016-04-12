@@ -141,7 +141,7 @@ class ManyPhotosOneAlbumCase(TestCase):
     def test_cover_photo_manual_set(self):
         """Test that a cover photo can be manually set."""
         old_cover = self.album.cover
-        new_cover = list(self.album.photos.all())[-1]
+        new_cover = self.album.photos.last()
         self.album.set_cover(new_cover)
         self.assertIsNot(self.album.cover, old_cover)
         self.assertIs(self.album.cover, new_cover)
@@ -249,6 +249,13 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
                 for other_user in other_users:
                     self.assertNotIn(photo, other_user.photos.all())
 
-    # Test adding a non-owned photo into own album -- raise valueerror
-
-# Test with multi owners - no overlap of photo sets
+    def test_no_cover_other_owners(self):
+        """Test that users cannot add other users photos as an album cover."""
+        for user in self.user_batch:
+            other_users = (other_user for other_user in self.user_batch
+                           if other_user != user)
+            album = user.albums.first()
+            for other_user in other_users:
+                other_photo = other_user.photos.first()
+                with self.assertRaises(ValueError):
+                    album.set_cover(other_photo)
