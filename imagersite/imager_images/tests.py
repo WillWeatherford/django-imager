@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db.models.fields.files import ImageFieldFile
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from .models import Photo, Album, PUB_CHOICES
+from .models import Photo, Album, PUB_CHOICES, PUB_DEFAULT
 from imager_profile.tests import UserFactory
 import factory
 import random
@@ -56,20 +56,24 @@ class OnePhotoOrAlbumCase(object):
         self.assertTrue(self.instance.pk)
 
     def test_instance_has_title(self):
-        """Check that instance has its title attribute."""
+        """Check that photo/album has its title attribute."""
         self.assertTrue(self.instance.title)
 
     def test_instance_has_desc(self):
-        """Check that instance has its description attribute."""
+        """Check that photo/album has its description attribute."""
         self.assertTrue(self.instance.description)
 
     def test_instance_has_mod_date(self):
-        """Check that photo date_modified is a datetime before now."""
+        """Check that photo/album date_modified is a datetime before now."""
         self.assertGreater(timezone.now(), self.instance.date_modified)
 
-    def test_instance_has_pub_date(self):
-        """Check that photo date_modified is a datetime before now."""
-        self.assertGreater(timezone.now(), self.instance.date_published)
+    def test_instance_pub_date(self):
+        """Check that photo/album date_published initializes as None."""
+        self.assertIsNone(self.instance.date_published)
+
+    def test_instance_published(self):
+        """Check that photo/album published is in correct choices set."""
+        self.assertIn(self.instance.published, PUB_CHOICES)
 
 
 @override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)

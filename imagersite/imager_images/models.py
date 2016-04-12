@@ -7,8 +7,6 @@ PUB_DEFAULT = PUB_CHOICES[0]
 PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
 DATE_FORMAT = '%d %B %Y %I:%M%p'
 
-# Update to the field in settings.
-
 
 class Photo(md.Model):
     """Represents a single image in the database."""
@@ -21,23 +19,19 @@ class Photo(md.Model):
     description = md.TextField()
     date_uploaded = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
-    date_published = md.DateTimeField(auto_now_add=True)
+    date_published = md.DateTimeField(null=True)
     published = md.CharField(max_length=255,
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)
 
     def __str__(self):
         """String output of Photo instance."""
-        return "{}... ({})".format(
-            self.title[:20],
-            self.date_published.strftime(DATE_FORMAT))
+        return "{}... ({})".format(self.title[:20], _pub_date(self))
 
     def __repr__(self):
         """Command line representation of Photo instance."""
         return "Photo(title={}, owner={}, date_published={}".format(
-            self.title[:20],
-            self.owner,
-            self.date_published.strftime(DATE_FORMAT))
+            self.title[:20], self.owner, _pub_date(self))
 
 
 class Album(md.Model):
@@ -53,10 +47,19 @@ class Album(md.Model):
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
-    date_published = md.DateTimeField(auto_now_add=True)
+    date_published = md.DateTimeField(null=True)
     published = md.CharField(max_length=255,
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)
+
+    def __str__(self):
+        """String output of Album instance."""
+        return "{}... ({})".format(self.title[:20], _pub_date(self))
+
+    def __repr__(self):
+        """Command line representation of Album instance."""
+        return "Album(title={}, owner={}, date_published={}".format(
+            self.title[:20], self.owner, _pub_date(self))
 
     def set_cover(self, photo):
         """Set provided photo as the cover for this album."""
@@ -82,3 +85,11 @@ class Album(md.Model):
             photo.save()
             if self.cover is None:
                 self.set_cover(photo)
+
+
+def _pub_date(obj):
+    """Return formatted datetime from given object or unpublished."""
+    try:
+        return obj.date_published.strftime(DATE_FORMAT)
+    except AttributeError:
+        return 'Unpublished'
