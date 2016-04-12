@@ -260,21 +260,19 @@ class ManyPhotosManyAlbumsManyUsersCase(TestCase):
 
     def test_exclusive_album_ownership(self):
         """Test that each user doesn't own other users' photos."""
-        for user in self.user_batch:
+        for album in self.album_batch:
             other_users = (other_user for other_user in self.user_batch
-                           if other_user != user)
-            for album in user.albums.all():
-                for other_user in other_users:
-                    self.assertNotIn(album, other_user.albums.all())
+                           if other_user != album.owner)
+            for other_user in other_users:
+                self.assertNotIn(album, other_user.albums.all())
 
     def test_exclusive_photo_ownership(self):
         """Test that each user doesn't own other users' photos."""
-        for user in self.user_batch:
+        for photo in self.photo_batch:
             other_users = (other_user for other_user in self.user_batch
-                           if other_user != user)
-            for photo in user.photos.all():
-                for other_user in other_users:
-                    self.assertNotIn(photo, other_user.photos.all())
+                           if other_user != photo.owner)
+            for other_user in other_users:
+                self.assertNotIn(photo, other_user.photos.all())
 
     def test_no_cover_other_owners(self):
         """Test that users cannot add other users photos as an album cover."""
