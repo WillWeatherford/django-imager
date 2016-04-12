@@ -1,6 +1,7 @@
 """Establish Python representations of Photos and Albums database tables."""
 from django.db import models as md
 from django.conf import settings
+from django.utils.encoding import python_2_unicode_compatible
 
 PUB_CHOICES = ['private', 'shared', 'public']
 PUB_DEFAULT = PUB_CHOICES[0]
@@ -8,6 +9,7 @@ PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
 DATE_FORMAT = '%d %B %Y %I:%M%p'
 
 
+@python_2_unicode_compatible
 class Photo(md.Model):
     """Represents a single image in the database."""
 
@@ -30,10 +32,12 @@ class Photo(md.Model):
 
     def __repr__(self):
         """Command line representation of Photo instance."""
-        return "Photo(title={}, owner={}, date_published={}".format(
-            self.title[:20], self.owner, _pub_date(self))
+        name = '.'.join((__name__, self.__class__.__name__))
+        return "{}(title={}, owner={}, date_published={}".format(
+            name, self.title[:20], self.owner, _pub_date(self))
 
 
+@python_2_unicode_compatible
 class Album(md.Model):
     """Represents a collection of images in the database."""
 
@@ -58,8 +62,9 @@ class Album(md.Model):
 
     def __repr__(self):
         """Command line representation of Album instance."""
-        return "Album(title={}, owner={}, date_published={}".format(
-            self.title[:20], self.owner, _pub_date(self))
+        name = '.'.join((__name__, self.__class__.__name__))
+        return "{}(title={}, owner={}, date_published={}".format(
+            name, self.title[:20], self.owner, _pub_date(self))
 
     def set_cover(self, photo):
         """Set provided photo as the cover for this album."""

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db.models.fields.files import ImageFieldFile
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from .models import Photo, Album, PUB_CHOICES, PUB_DEFAULT
+from .models import Photo, Album, PUB_CHOICES
 from imager_profile.tests import UserFactory
 import factory
 import random

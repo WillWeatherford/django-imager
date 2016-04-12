@@ -1,6 +1,7 @@
 """Establish models for the imager site's User Profile."""
 from django.db import models as md
 from django.conf import settings
+from django.utils.encoding import python_2_unicode_compatible
 
 
 class ActiveManager(md.Manager):
@@ -12,6 +13,7 @@ class ActiveManager(md.Manager):
         return queryset.filter(user__is_active=True)
 
 
+@python_2_unicode_compatible
 class ImagerProfile(md.Model):
     """Profile attached to User model by one-to-one relationship."""
 
