@@ -7,6 +7,8 @@ PUB_DEFAULT = PUB_CHOICES[0]
 PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
 DATE_FORMAT = '%d %B %Y %I:%M%p'
 
+# Update to the field in settings.
+
 
 class Photo(md.Model):
     """Represents a single image in the database."""
@@ -14,6 +16,7 @@ class Photo(md.Model):
     owner = md.ForeignKey(settings.AUTH_USER_MODEL,
                           related_name='photos')
     albums = md.ManyToManyField('Album', related_name='photos')
+    img_file = md.ImageField(upload_to='img_files')
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_uploaded = md.DateTimeField(auto_now_add=True)
