@@ -9,6 +9,20 @@ PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
 DATE_FORMAT = '%d %B %Y %I:%M%p'
 
 
+class PublicManager(md.Manager):
+    """QuerySet of Photos which are published."""
+
+    def get_queryset(self):
+        """Return QuerySet filtering only Photos which are public."""
+        queryset = super(PublicManager, self).get_queryset()
+        return queryset.filter(published='public')
+
+    def random(self):
+        """Return a single random public photo."""
+        queryset = self.get_queryset()
+        return queryset.order_by('?').first()
+
+
 @python_2_unicode_compatible
 class Photo(md.Model):
     """Represents a single image in the database."""
@@ -25,6 +39,8 @@ class Photo(md.Model):
     published = md.CharField(max_length=255,
                              choices=PUB_FIELD_CHOICES,
                              default=PUB_DEFAULT)
+    objects = md.Manager()
+    public = PublicManager()
 
     def __str__(self):
         """String output of Photo instance."""
