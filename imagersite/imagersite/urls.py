@@ -25,6 +25,10 @@ urlpatterns = [
     url(r'^accounts/', include('registration.backends.hmac.urls')),
 ]
 
+# login: django.contrib.auth.views.login
+# logout: django.contrib.auth.views.logout
+# in views: from django.contrib.auth import authenticate, login, logout
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
