@@ -62,7 +62,7 @@ class Album(md.Model):
     def __repr__(self):
         """Command line representation of Album instance."""
         name = '.'.join((__name__, self.__class__.__name__))
-        return "{}(title={}, owner={}, date_published={}".format(
+        return "{}(title={}, owner={}, date_published={})".format(
             name, self.title[:20], self.owner, _pub_date(self))
 
     def set_cover(self, photo):
