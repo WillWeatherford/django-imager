@@ -119,12 +119,21 @@ class RegistrationCase(TestCase):
 
     def setUp(self):
         """Set up for unauthenticated case with no users."""
-        client = Client()
-        self.reg_post_good = client.post(REG, GOOD_REG_PARAMS, follow=True)
+        self.client = Client()
+        self.reg_post_good = self.client.post(REG, GOOD_REG_PARAMS,
+                                              follow=True)
         try:
             self.email = mail.outbox[0]
         except IndexError:
             self.email = None
+
+    def test_user_in_db(self):
+        """Test that there is one user in the database."""
+        self.assertEqual(User.objects.count(), 1)
+
+    def test_user_in_db_inactive(self):
+        """Test that there is one user in the database, who is inactive."""
+        self.assertFalse(User.objects.first().is_active)
 
     def test_good_registration_ok(self):
         """Test that good registration gives a redirect response."""
@@ -150,12 +159,18 @@ class RegistrationCase(TestCase):
     def test_get_activation_link_ok(self):
         """Test that link from activation email works."""
         path = re.search(LINK_PATTERN, self.email.body).group()
-        client = Client()
-        response = client.get(path, follow=True)
+        response = self.client.get(path, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_get_activation_link_redirect(self):
+        """Test that link from activation email works."""
+        path = re.search(LINK_PATTERN, self.email.body).group()
+        response = self.client.get(path, follow=True)
+        self.assertIn(('/accounts/activate/complete/', 302),
+                      response.redirect_chain)
 
 
 class AuthenticatedCase(TestCase):
-    """Test case where we will register as part of setup."""
+    """Test case where we will fully register as part of setup."""
 
     pass
