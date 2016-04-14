@@ -127,6 +127,11 @@ class RegistrationCase(TestCase):
         except IndexError:
             self.email = None
 
+    def tearDown(self):
+        """Delete all users to re-use good params."""
+        for user in User.objects.all():
+            user.delete()
+
     def test_user_in_db(self):
         """Test that there is one user in the database."""
         self.assertEqual(User.objects.count(), 1)
@@ -173,4 +178,32 @@ class RegistrationCase(TestCase):
 class AuthenticatedCase(TestCase):
     """Test case where we will fully register as part of setup."""
 
-    pass
+    def setUp(self):
+        """Set up for unauthenticated case with no users."""
+        self.client = Client()
+        self.client.post(REG, GOOD_REG_PARAMS, follow=True)
+        try:
+            email = mail.outbox[0]
+            path = re.search(LINK_PATTERN, email.body).group()
+            self.client.get(path, follow=True)
+        except IndexError:
+            email = None
+
+    def tearDown(self):
+        """Delete all users to re-use good params."""
+        for user in User.objects.all():
+            user.delete()
+
+    def test_user_in_db(self):
+        """Test that there is one user in the database."""
+        self.assertEqual(User.objects.count(), 1)
+
+    def test_user_in_db_active(self):
+        """Test that there is one user in the database, who is active."""
+        self.assertTrue(User.objects.first().is_active)
+
+    def test_user_in_db_username(self):
+        """Test that the user in the database has the expected info."""
+        user = User.objects.first()
+        self.assertEqual(user.username, GOOD_REG_PARAMS['username'])
+        self.assertEqual(user.email, GOOD_REG_PARAMS['email'])
