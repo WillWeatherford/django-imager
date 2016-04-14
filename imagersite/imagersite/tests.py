@@ -1,24 +1,41 @@
 """Tests for root config views and urls."""
 from __future__ import unicode_literals
+from django.core import mail
 from django.test import Client, TestCase
 from django.contrib.auth.models import AnonymousUser, User
-from registration.forms import RegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
+from registration.forms import RegistrationForm
 
 DEFAULT_IMG = 'media/django-magic.jpg'
+HOME = '/'
+REG = '/accounts/register/'
+LOGIN = '/accounts/login/'
+LOGOUT = '/accounts/logout/'
+
+BAD_LOGIN_PARAMS = {'username': 'NotRealUser', 'password': 'notsecret'}
+BAD_REG_PARAMS = {'username': 'NotRealUser',
+                  'email': 'bademail@baddomain',
+                  'password1': 'short',
+                  'password2': 'shrt'}
+
+GOOD_REG_PARAMS = {'username': 'CoolPerson',
+                   'email': 'coolperson@example.com',
+                   'password1': 's00p3rs3cr3t',
+                   'password2': 's00p3rs3cr3t'}
 
 
 class UnauthenticatedCase(TestCase):
     """Testing when user is not logged in."""
 
     def setUp(self):
-        """Set up for simple unauthenticated case with no users."""
-        self.client = Client()
-        self.home_response = self.client.get('/')
-        self.reg_response = self.client.get('/accounts/register/')
-        self.login_get_response = self.client.get('/accounts/login/')
-        params = {'username': 'NotRealUser', 'password': 'notsecret'}
-        self.login_post_response = self.client.post('/accounts/login/', params)
+        """Set up for unauthenticated case with no users."""
+        client = Client()
+        self.home_response = client.get(HOME)
+        self.reg_response = client.get(REG)
+        self.reg_post_bad = client.post(REG, BAD_REG_PARAMS)
+        self.login_get_response = client.get(LOGIN)
+        self.login_post_bad = client.post(LOGIN, BAD_LOGIN_PARAMS)
+        self.logout_response = client.get(LOGOUT)
         self.home_context = self.home_response.context[0]
 
     def test_no_users_in_db(self):
@@ -35,8 +52,7 @@ class UnauthenticatedCase(TestCase):
 
     def test_logout_ok(self):
         """Check that logout page can be visited."""
-        response = self.client.get('/accounts/logout/')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.logout_response.status_code, 200)
 
     def test_register_ok(self):
         """Check that register page can be visited."""
@@ -71,11 +87,54 @@ class UnauthenticatedCase(TestCase):
         self.assertIsInstance(self.login_get_response.context_data.get('form'),
                               AuthenticationForm)
 
+    def test_login_failure_ok(self):
+        """Test that login failure returns to login page."""
+        self.assertEqual(self.login_post_bad.status_code, 200)
+
     def test_login_failure_message(self):
         """Test that login fails since there are no registered users."""
         expected_msg = b'Please enter a correct username and password.'
-        self.assertIn(expected_msg, self.login_post_response.content)
+        self.assertIn(expected_msg, self.login_post_bad.content)
 
-    def test_login_failure_ok(self):
-        """Test that login fails since there are no registered users."""
-        self.assertEqual(self.login_post_response.status_code, 200)
+    def test_reg_failure_ok(self):
+        """Test that bad registration information returns a 200 response."""
+        self.assertEqual(self.reg_post_bad.status_code, 200)
+
+    def test_reg_failure_message_email(self):
+        """Test that bad registration gives a bad email message."""
+        expected_msg = b'Enter a valid email address.'
+        self.assertIn(expected_msg, self.reg_post_bad.content)
+
+    def test_reg_failure_message_password_match(self):
+        """Test bad registration gives message when passwords don't match."""
+        expected_msg = b'The two password fields didn&#39;t match.'
+        self.assertIn(expected_msg, self.reg_post_bad.content)
+
+
+class RegistrationCase(TestCase):
+    """Tests with one registraton post attempt in setup."""
+
+    def setUp(self):
+        """Set up for unauthenticated case with no users."""
+        client = Client()
+        self.reg_post_good = client.post(REG, GOOD_REG_PARAMS, follow=True)
+
+    def test_good_registration_ok(self):
+        """Test that good registration gives a redirect response."""
+        self.assertEqual(self.reg_post_good.status_code, 200)
+
+    def test_good_registration_redirect(self):
+        """Test that good registration redirects through complete page."""
+        self.assertIn(self.reg_post_good.redirect_chain,
+                      ('/accounts/register/complete/', 302))
+
+    def test_reg_email_sent(self):
+        """Test that the activation email is in the outbox."""
+        outbox = mail.outbox
+        # import pdb;pdb.set_trace()
+
+
+class AuthenticatedCase(TestCase):
+    """Test case where we will register as part of setup."""
+
+    pass
