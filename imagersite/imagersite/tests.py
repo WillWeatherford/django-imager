@@ -64,11 +64,9 @@ class UnauthenticatedCase(TestCase):
     def test_no_authenticated_user(self):
         """Test that there is no authenticated user."""
         for dic in self.home_context:
-            try:
-                user = dic['user']
+            user = dic.get('user')
+            if user:
                 break
-            except KeyError:
-                pass
         self.assertIsInstance(user, AnonymousUser)
 
     def test_no_username_display(self):
@@ -189,6 +187,9 @@ class AuthenticatedCase(TestCase):
         except IndexError:
             email = None
         self.user = User.objects.first()
+        params = {'username': self.user.username,
+                  'password': BAD_REG_PARAMS['password1']}
+        self.login_post_bad = self.client.post(LOGIN, params, follow=True)
 
     def tearDown(self):
         """Delete all users to re-use good params."""
@@ -197,12 +198,42 @@ class AuthenticatedCase(TestCase):
     def test_user_in_db(self):
         """Test that there is one user in the database."""
         self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.first(), self.user)
 
     def test_user_in_db_active(self):
-        """Test that there is one user in the database, who is active."""
+        """Test that the user is active."""
         self.assertTrue(self.user.is_active)
 
     def test_user_in_db_username(self):
         """Test that the user in the database has the expected info."""
         self.assertEqual(self.user.username, GOOD_REG_PARAMS['username'])
         self.assertEqual(self.user.email, GOOD_REG_PARAMS['email'])
+
+    def test_login_bad_password_ok(self):
+        """Test that bad password login attempt returns login page OK."""
+        self.assertEqual(self.login_post_bad.status_code, 200)
+
+    def test_login_bad_password_message(self):
+        """Test that bad password login attempt returns login page OK."""
+        expected_msg = b'Please enter a correct username and password.'
+        self.assertIn(expected_msg, self.login_post_bad.content)
+
+    def test_login_bad_password_unauthenticated(self):
+        """Test that bad password login attempt returns login page OK."""
+        for dic in self.login_post_bad.context[0]:
+            user = dic.get('user')
+            if user:
+                break
+        self.assertIsInstance(user, AnonymousUser)
+
+    def test_login_post_ok(self):
+        """Test that registered user can log in."""
+        params = {'username': self.user.username,
+                  'password': GOOD_REG_PARAMS['password1']}
+        response = self.client.post(LOGIN, params, follow=True)
+        self.assertEqual(response.status_code, 200)
+        for dic in response.context[0]:
+            user = dic.get('user')
+            if user:
+                break
+        self.assertIsInstance(user, User)
