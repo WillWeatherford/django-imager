@@ -71,7 +71,7 @@ class UnauthenticatedCase(TestCase):
 
     def test_no_username_display(self):
         """Test that message displaying username does not appear."""
-        self.assertFalse(b'Log out' in self.home_response.content)
+        self.assertNotIn(b'Log out', self.home_response.content)
 
     def test_default_img(self):
         """Check that the default image is displayed, not a user's image."""
@@ -190,6 +190,8 @@ class AuthenticatedCase(TestCase):
         params = {'username': self.user.username,
                   'password': BAD_REG_PARAMS['password1']}
         self.login_post_bad = self.client.post(LOGIN, params, follow=True)
+        params['password'] = GOOD_REG_PARAMS['password1']
+        self.login_post_good = self.client.post(LOGIN, params, follow=True)
 
     def tearDown(self):
         """Delete all users to re-use good params."""
@@ -204,10 +206,17 @@ class AuthenticatedCase(TestCase):
         """Test that the user is active."""
         self.assertTrue(self.user.is_active)
 
-    def test_user_in_db_username(self):
+    def test_user_in_db_params(self):
         """Test that the user in the database has the expected info."""
         self.assertEqual(self.user.username, GOOD_REG_PARAMS['username'])
         self.assertEqual(self.user.email, GOOD_REG_PARAMS['email'])
+
+    def test_unique_reg_fail(self):
+        """Test that we cannot re-register with the same username."""
+        response = self.client.post(REG, GOOD_REG_PARAMS)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'A user with that username already exists.',
+                      response.content)
 
     def test_login_bad_password_ok(self):
         """Test that bad password login attempt returns login page OK."""
@@ -226,14 +235,19 @@ class AuthenticatedCase(TestCase):
                 break
         self.assertIsInstance(user, AnonymousUser)
 
-    def test_login_post_ok(self):
+    def test_login_post_good_ok(self):
         """Test that registered user can log in."""
-        params = {'username': self.user.username,
-                  'password': GOOD_REG_PARAMS['password1']}
-        response = self.client.post(LOGIN, params, follow=True)
-        self.assertEqual(response.status_code, 200)
-        for dic in response.context[0]:
+        self.assertEqual(self.login_post_good.status_code, 200)
+
+    def test_login_post_good_authenticated_user(self):
+        """Test that there is an authenticated user in response."""
+        self.assertEqual(self.login_post_good.status_code, 200)
+        for dic in self.login_post_good.context[0]:
             user = dic.get('user')
             if user:
                 break
         self.assertIsInstance(user, User)
+
+    def test_logged_in_logout_link(self):
+        """Test that logged in user sees logout link."""
+        self.assertIn(b'Log out', self.login_post_good.content)
