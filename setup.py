@@ -18,6 +18,7 @@ TEST = [
     'coverage',
     'pytest-cov',
     'factory-boy',
+    'django-registration',
 ]
 
 DEV = [
