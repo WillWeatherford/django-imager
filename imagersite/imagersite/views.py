@@ -20,8 +20,4 @@ class HomeView(TemplateView):
         if user_photo:
             img_url = user_photo.img_file.url
 
-        return {
-            'testval': 'Hello world!',
-            'img_url': img_url,
-            'img_obj': user_photo,
-        }
+        return {'img_url': img_url}
