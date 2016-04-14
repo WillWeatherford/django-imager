@@ -188,11 +188,11 @@ class AuthenticatedCase(TestCase):
             self.client.get(path, follow=True)
         except IndexError:
             email = None
+        self.user = User.objects.first()
 
     def tearDown(self):
         """Delete all users to re-use good params."""
-        for user in User.objects.all():
-            user.delete()
+        self.user.delete()
 
     def test_user_in_db(self):
         """Test that there is one user in the database."""
@@ -200,10 +200,9 @@ class AuthenticatedCase(TestCase):
 
     def test_user_in_db_active(self):
         """Test that there is one user in the database, who is active."""
-        self.assertTrue(User.objects.first().is_active)
+        self.assertTrue(self.user.is_active)
 
     def test_user_in_db_username(self):
         """Test that the user in the database has the expected info."""
-        user = User.objects.first()
-        self.assertEqual(user.username, GOOD_REG_PARAMS['username'])
-        self.assertEqual(user.email, GOOD_REG_PARAMS['email'])
+        self.assertEqual(self.user.username, GOOD_REG_PARAMS['username'])
+        self.assertEqual(self.user.email, GOOD_REG_PARAMS['email'])
