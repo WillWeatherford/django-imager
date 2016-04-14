@@ -136,3 +136,4 @@ MEDIA_URL = '/media/'
 # TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 ACCOUNT_ACTIVATION_DAYS = 7
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
