@@ -5,6 +5,7 @@ from django.test import Client, TestCase
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.auth.forms import AuthenticationForm
 from registration.forms import RegistrationForm
+import re
 
 DEFAULT_IMG = 'media/django-magic.jpg'
 HOME = '/'
@@ -22,6 +23,8 @@ GOOD_REG_PARAMS = {'username': 'CoolPerson',
                    'email': 'coolperson@example.com',
                    'password1': 's00p3rs3cr3t',
                    'password2': 's00p3rs3cr3t'}
+
+LINK_PATTERN = r'/accounts/activate/.*/'
 
 
 class UnauthenticatedCase(TestCase):
@@ -118,6 +121,10 @@ class RegistrationCase(TestCase):
         """Set up for unauthenticated case with no users."""
         client = Client()
         self.reg_post_good = client.post(REG, GOOD_REG_PARAMS, follow=True)
+        try:
+            self.email = mail.outbox[0]
+        except IndexError:
+            self.email = None
 
     def test_good_registration_ok(self):
         """Test that good registration gives a redirect response."""
@@ -130,19 +137,22 @@ class RegistrationCase(TestCase):
 
     def test_reg_email_sent(self):
         """Test that the activation email is in the outbox."""
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue(self.email)
 
     def test_reg_email_to(self):
         """Test that the activation email was sent to registered email."""
-        email = mail.outbox[0]
-        self.assertIn(GOOD_REG_PARAMS['email'], email.to)
+        self.assertIn(GOOD_REG_PARAMS['email'], self.email.to)
 
     def test_reg_email_link(self):
-        """Test that activation email has an activation email in the body."""
-        import re
-        email = mail.outbox[0]
-        pattern = r'testserver/accounts/activate/.*\.'
-        self.assertTrue(re.search(pattern, email.body))
+        """Test that activation email has an activation link in the body."""
+        self.assertTrue(re.search(LINK_PATTERN, self.email.body))
+
+    def test_get_activation_link_ok(self):
+        """Test that link from activation email works."""
+        path = re.search(LINK_PATTERN, self.email.body).group()
+        client = Client()
+        response = client.get(path, follow=True)
+        self.assertEqual(response.status_code, 200)
 
 
 class AuthenticatedCase(TestCase):
