@@ -14,6 +14,8 @@ USER_BATCH_SIZE = 5
 TMP_MEDIA_ROOT = '/tmp/media/'
 
 
+# TODO: write tests for publicmanager
+
 class PhotoFactory(factory.django.DjangoModelFactory):
     """Creates Photo models for testing."""
 

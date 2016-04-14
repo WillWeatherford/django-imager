@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+</head>
+<body>
+
+<nav>
+
+<a href="/">Home</a> |
+
+{% if user.is_authenticated %}
+
+Logged in as {{user.username}} | <a href="/accounts/logout/">Log out</a>
+
+{% else %}
+
+<a href="/accounts/login">Log in</a> | <a href="/accounts/register">Register</a>
+
+{% endif %}
+</nav>
+{% block content %}
+
+{% endblock %}
+</body>
+</html>
