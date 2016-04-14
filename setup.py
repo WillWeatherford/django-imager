@@ -12,13 +12,13 @@ here = os.path.abspath(os.path.dirname(__file__))
 REQUIRES = [
     'django',
     'psycopg2',
+    'django-registration',
 ]
 TEST = [
     'tox',
     'coverage',
     'pytest-cov',
     'factory-boy',
-    'django-registration',
 ]
 
 DEV = [
