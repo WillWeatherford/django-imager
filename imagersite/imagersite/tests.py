@@ -125,13 +125,24 @@ class RegistrationCase(TestCase):
 
     def test_good_registration_redirect(self):
         """Test that good registration redirects through complete page."""
-        self.assertIn(self.reg_post_good.redirect_chain,
-                      ('/accounts/register/complete/', 302))
+        self.assertIn(('/accounts/register/complete/', 302),
+                      self.reg_post_good.redirect_chain)
 
     def test_reg_email_sent(self):
         """Test that the activation email is in the outbox."""
-        outbox = mail.outbox
-        # import pdb;pdb.set_trace()
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_reg_email_to(self):
+        """Test that the activation email was sent to registered email."""
+        email = mail.outbox[0]
+        self.assertIn(GOOD_REG_PARAMS['email'], email.to)
+
+    def test_reg_email_link(self):
+        """Test that activation email has an activation email in the body."""
+        import re
+        email = mail.outbox[0]
+        pattern = r'testserver/accounts/activate/.*\.'
+        self.assertTrue(re.search(pattern, email.body))
 
 
 class AuthenticatedCase(TestCase):
