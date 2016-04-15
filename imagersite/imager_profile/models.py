@@ -39,3 +39,7 @@ class ImagerProfile(md.Model):
     def is_active(self):
         """Return boolean of associated User's is_active boolean state."""
         return self.user.is_active
+
+    def add_friend(self, other_user):
+        """Take a User make a new relationship with its profile."""
+        self.friends.add(other_user.profile)
