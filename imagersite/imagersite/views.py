@@ -19,13 +19,3 @@ class HomeView(TemplateView):
             img_url = user_photo.img_file.url
 
         return {'img_url': img_url}
-
-
-class ProfileView(TemplateView):
-    """Shows a User's profile page."""
-
-    template_name = "profile.html"
-
-    def get(self, request, *args, **kwargs):
-        """Stand in for get."""
-        pass
