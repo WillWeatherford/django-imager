@@ -15,7 +15,10 @@
 
 {% if user.is_authenticated %}
 
-Logged in as {{user.username}} | <a href="/accounts/logout/">Log out</a>
+    <span>Logged in as {{user.username}}</span>|
+    <span><a href="/accounts/logout/">Log out</a></span>|
+    <span><a href="/profile/{{user.pk}}/">Profile</a></span>|
+    <span><a href="/library/{{user.pk}}/">Library</a></span>
 
 {% else %}
 

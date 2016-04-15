@@ -1,7 +1,5 @@
 """Views at the configuration root level."""
 
-from registration.forms import RegistrationForm
-from registration.backends.hmac.views import RegistrationView
 from django.views.generic import TemplateView
 from imager_images.models import Photo
 

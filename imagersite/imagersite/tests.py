@@ -241,7 +241,6 @@ class AuthenticatedCase(TestCase):
 
     def test_login_post_good_authenticated_user(self):
         """Test that there is an authenticated user in response."""
-        self.assertEqual(self.login_post_good.status_code, 200)
         for dic in self.login_post_good.context[0]:
             user = dic.get('user')
             if user:
