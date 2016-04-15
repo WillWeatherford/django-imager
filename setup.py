@@ -13,6 +13,7 @@ REQUIRES = [
     'django',
     'psycopg2',
     'django-registration',
+    'sorl-thumbnail',
 ]
 TEST = [
     'tox',
