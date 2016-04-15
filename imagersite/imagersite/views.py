@@ -26,6 +26,6 @@ class ProfileView(TemplateView):
 
     template_name = "profile.html"
 
-    def get(request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """Stand in for get."""
         pass
