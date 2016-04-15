@@ -1,7 +1,5 @@
 """Views at the configuration root level."""
 
-from registration.forms import RegistrationForm
-from registration.backends.hmac.views import RegistrationView
 from django.views.generic import TemplateView
 from imager_images.models import Photo
 
@@ -21,3 +19,13 @@ class HomeView(TemplateView):
             img_url = user_photo.img_file.url
 
         return {'img_url': img_url}
+
+
+class ProfileView(TemplateView):
+    """Shows a User's profile page."""
+
+    template_name = "profile.html"
+
+    def get(request, *args, **kwargs):
+        """Stand in for get."""
+        pass
