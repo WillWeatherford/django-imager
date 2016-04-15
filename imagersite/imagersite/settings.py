@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sorl.thumbnail',
     'imager_images',
     'imager_profile',
 ]
@@ -91,23 +92,24 @@ DATABASES = {
     }
 }
 
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'image_cache_table',
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'UserAttributeSimilarityValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'MinimumLengthValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'CommonPasswordValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'NumericPasswordValidator')},
 ]
 
 
