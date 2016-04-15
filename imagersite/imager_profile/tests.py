@@ -122,3 +122,26 @@ class ManyUsersCase(TestCase):
         for user in random.sample(self.user_batch, USER_BATCH_SIZE // 2):
             user.delete()
         self.assertEqual(ImagerProfile.active.count(), USER_BATCH_SIZE // 2)
+
+    def test_no_friends(self):
+        """Make sure that all users start with no friends."""
+        for user in self.user_batch:
+            self.assertFalse(user.profile.friends.count())
+
+    def test_friend_relationship(self):
+        """Check that friends ManyToMany relationship is symmetrical."""
+        user1, user2 = random.sample(self.user_batch, 2)
+        user1.profile.add_friend(user2)
+        self.assertTrue(user1.profile.friends.count())
+        self.assertTrue(user2.profile.friends.count())
+
+    def test_many_friends_relationship(self):
+        """Check that many users can be friends with each other."""
+        half = USER_BATCH_SIZE // 2
+        batch1, batch2 = self.user_batch[:half], self.user_batch[half:]
+        for user1 in batch1:
+            for user2 in batch2:
+                user1.profile.add_friend(user2)
+        for user in self.user_batch:
+            self.assertEqual(user.profile.friends.count(),
+                             USER_BATCH_SIZE // 2)

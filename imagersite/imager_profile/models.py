@@ -18,6 +18,7 @@ class ImagerProfile(md.Model):
     """Profile attached to User model by one-to-one relationship."""
 
     user = md.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
+    friends = md.ManyToManyField('self', related_name='friends')
     location = md.CharField(default='', max_length=255)
     camera = md.CharField(default='', max_length=255)
     fav_photo = md.CharField(default='', max_length=255)
@@ -38,3 +39,7 @@ class ImagerProfile(md.Model):
     def is_active(self):
         """Return boolean of associated User's is_active boolean state."""
         return self.user.is_active
+
+    def add_friend(self, other_user):
+        """Take a User make a new relationship with its profile."""
+        self.friends.add(other_user.profile)
