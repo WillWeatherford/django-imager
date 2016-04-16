@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+    {{user.username}}'s Library
+{% endblock %}
+
+{% block content %}
+
+    <h4>{{user.username}}'s Library</h4>
+
+    <section class="albums">
+        {% for album in user.albums.all %}
+            <article class="album-info">
+                <p "album-title">{{album.title}}</p>
+                <img src="{{album.cover.img_file.url}}">
+            </article>
+        {% endfor %}
+    </section>
+    <section "photos">
+        {% for photo in user.photos.all %}
+            <article class="photo-info">
+                <p "photo-title">{{photo.title}}</p>
+                <img src="{{photo.img_file.url}}">
+            </article>
+        {% endfor %}
+    </section>
+    
+{% endblock %}
