@@ -11,55 +11,54 @@
 
     <section class="albums">
         <h3>Albums</h3>
-        {% for album in user.albums.all %}
-            <article class="album-info">
-                <p class="album-title">{{album.title}}</p>
+        <div class="container">
+            <div class="row">
+                {% for album in user.albums.all %}
+                    <div class="col-sm-3">
+                    <article class="album-info">
+                        <p class="album-title">{{album.title}}</p>
 
-                <!-- Need to set default image if no cover specified -->
+                        <!-- Need to set default image if no cover specified -->
 
-                {% thumbnail album.cover.img_file "200" as img_file %}
-                    <a href="/images/album/{{album.pk}}">
-                        <img src="{{img_file.url}}">
-                    </a>
-                {% endthumbnail %}
-            </article>
-        {% endfor %}
+                        {% thumbnail album.cover.img_file "200" as img_file %}
+                            <a href="/images/album/{{album.pk}}">
+                                <img src="{{img_file.url}}">
+                            </a>
+
+                        {% empty %}
+                            {% with MEDIA_URL|add:"/Users/hannahkrager/401-Python/django-imager/imagersite/media/doctorwho.jpeg" as path %}
+                                {% thumbnail path "200" as img %}
+                                    <a href="/images/album/{{album.pk}}">
+                                        <img src="{{img.url}}">
+                                    </a>
+                                {% endthumbnail %}
+                            {% endwith %}
+                        {% endthumbnail %}
+                    </article>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </section>
     <section class="photos">
         <h3>Photos</h3>
         <div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-      One of three columns
-    </div>
-    <div class="col-sm-4">
-      One of three columns
-    </div>
-    <div class="col-sm-4">
-      One of three columns
-    </div>
-  </div>
-</div>
-<div class="container">
-  <div class="row">
-    
-        {% for photo in user.photos.all %}
-        <div class="col-sm-3">
-            <article class="photo-info">
-                <p class="photo-title">{{photo.title}}</p>
-                {% thumbnail photo.img_file "200" as file %}
-                    <a href="/images/photo/{{photo.pk}}">
-                        <img src="{{file.url}}">
-                    </a>
-                    {% empty %}
-                    <h2>BOOM</h2>
-                {% endthumbnail %}
-            </article>
+                <div class="row">
+                    {% for photo in user.photos.all %}
+                        <div class="col-sm-3">
+                            <article class="photo-info">
+                                <p class="photo-title">{{photo.title}}</p>
+                                {% thumbnail photo.img_file "200" as file %}
+                                    <a href="/images/photo/{{photo.pk}}">
+                                        <img src="{{file.url}}">
+                                    </a>
+                                    {% empty %}
+                                    <p>No Photo Found</p>
+                                {% endthumbnail %}
+                            </article>
+                        </div>
+                    {% endfor %}
             </div>
-        {% endfor %}
         </div>
-        </div>
-
     </section>
-    
 {% endblock %}
