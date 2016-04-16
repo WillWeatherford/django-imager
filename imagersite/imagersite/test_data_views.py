@@ -1,9 +1,11 @@
 """Tests for profile, library, album and photo views."""
 from __future__ import unicode_literals
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.contrib.auth.models import User
 from imager_profile.tests import UserFactory
+from imager_images.tests import TMP_MEDIA_ROOT, AlbumFactory, PhotoFactory
 from .test_auth import user_from_response
+from imager_images.models import Photo, Album
 
 DEFAULT_IMG = 'media/django-magic.jpg'
 HOME = '/'
@@ -15,36 +17,47 @@ LIBRARY = '/images/library/'
 ALBUM = '/images/album/'
 PHOTO = '/images/photo/'
 
-# import photofactory
-
-# GOOD_REG_PARAMS = {'username': 'CoolPerson{}',
-#                    'email': 'coolperson{}@example.com',
-#                    'password1': 's00p3rs3cr3t',
-#                    'password2': 's00p3rs3cr3t'}
-
-NUM_USERS = 3
-
-# LINK_PATTERN = r'/accounts/activate/.*/'
+NUM_USERS = 4
+NUM_ALBUMS = 4
+NUM_PHOTOS = 8
 
 
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class AuthenticatedCase(TestCase):
     """Test case where we will fully register as part of setup."""
 
     def setUp(self):
         """Set up for unauthenticated case with no users."""
-        self.user_batch = UserFactory.create_batch(NUM_USERS)
         self.users_sessions = []
 
-        for user in self.user_batch:
-            client = Client()
+        for user in UserFactory.create_batch(NUM_USERS):
             params = {'username': user.username, 'password': 'secret'}
-            response = client.post(LOGIN, params, follow=True)
-            session = {'user': user, 'client': client, 'login_response': response}
+
+            session = {'user': user}
+            session['client'] = client = Client()
+            session['login_response'] = client.post(LOGIN, params, follow=True)
+            session['profile_response'] = client.get(
+                PROFILE, params, follow=True)
+            session['lib_response'] = client.get(LIBRARY, params, follow=True)
             self.users_sessions.append(session)
+
+            album_batch = AlbumFactory.create_batch(NUM_ALBUMS, owner=user)
+            for album in album_batch:
+                photo_batch = PhotoFactory.create_batch(NUM_PHOTOS, owner=user)
+                album.add_photos(photo_batch)
 
     def test_num_users(self):
         """Test there are as many users in the database as we registered."""
         self.assertEqual(User.objects.count(), NUM_USERS)
+
+    def test_num_albums(self):
+        """Test there are as many albums in the database as we created."""
+        self.assertEqual(Album.objects.count(), NUM_USERS * NUM_ALBUMS)
+
+    def test_num_photos(self):
+        """Test there are as many users in the database as we created."""
+        self.assertEqual(Photo.objects.count(),
+                         NUM_USERS * NUM_ALBUMS * NUM_PHOTOS)
 
     def test_all_logged_in(self):
         """Test that all users are logged in."""
@@ -65,19 +78,17 @@ class AuthenticatedCase(TestCase):
     def test_library_ok(self):
         """Test that library page is accessible."""
         for session in self.users_sessions:
-            client = session['client']
-            response = client.get('/images/library/')
+            response = session['lib_response']
             self.assertEqual(response.status_code, 200)
 
-    def test_library_ok(self):
+    def test_library_username(self):
         """Test that library page is accessible."""
         for session in self.users_sessions:
-            client = session['client']
-            response = client.get('/images/library/')
-            self.assertEqual(response.status_code, 200)
+            response = session['lib_response']
+            user = session['user']
+            self.assertIn(user.username.encode('utf-8'), response.content)
 
 
-    # test that library page is accessible
     # test default image if no cover
     # test that owners see all of their albums
     # test that owners see all of their photos
