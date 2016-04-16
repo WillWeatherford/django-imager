@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+    {{object.title}}
+{% endblock %}
+
+{% block content %}
+
+<section class="albums">
+    <h3>{{object.title}}</h3>
+    {% for photo in object.photos.all %}
+        <article class="photo-info">
+            <p class="photo-title">{{photo.title}}</p>
+            {% thumbnail photo.img_file "200" as img_file %}
+                <a href="/images/photo/{{photo.pk}}">
+                    <img src="{{img_file.url}}">
+                </a>
+            {% endthumbnail %}
+        </article>
+    {% endfor %}
+</section>
+
+{% endblock %}

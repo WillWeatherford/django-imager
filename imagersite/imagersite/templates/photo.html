@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+    {{obj.title}}
+{% endblock %}
+
+{% block content %}
+
+<section class="photos">
+    <article class="photo-info">
+
+        <!-- link to go back to album -->
+
+        <h3>{{object.title}}</h3>
+        <img src="{{object.img_file.url}}">
+        <p>{{object.description}}</p>
+    </article>
+</section>
+
+{% endblock %}
