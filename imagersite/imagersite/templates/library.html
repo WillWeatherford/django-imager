@@ -27,16 +27,39 @@
     </section>
     <section class="photos">
         <h3>Photos</h3>
+        <div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      One of three columns
+    </div>
+    <div class="col-sm-4">
+      One of three columns
+    </div>
+    <div class="col-sm-4">
+      One of three columns
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    
         {% for photo in user.photos.all %}
+        <div class="col-sm-3">
             <article class="photo-info">
                 <p class="photo-title">{{photo.title}}</p>
-                {% thumbnail photo.img_file "200" as img_file %}
+                {% thumbnail photo.img_file "200" as file %}
                     <a href="/images/photo/{{photo.pk}}">
-                        <img src="{{img_file.url}}">
+                        <img src="{{file.url}}">
                     </a>
+                    {% empty %}
+                    <h2>BOOM</h2>
                 {% endthumbnail %}
             </article>
+            </div>
         {% endfor %}
+        </div>
+        </div>
+
     </section>
     
 {% endblock %}
