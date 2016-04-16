@@ -86,11 +86,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django-imager',
         'USER': user,
-        'PASSWORD': password,
         'HOST': 'localhost',
         'PORT': '5432',
+        'PASSWORD': password
     }
 }
+
 
 CACHES = {
     'default': {
