@@ -17,14 +17,21 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from .views import HomeView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home_page'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
-    url(r'^accounts/profile/$', TemplateView.as_view(template_name="profile.html"))
+    url(r'^accounts/profile/$',
+        TemplateView.as_view(template_name="profile.html")),
+    url(r'^images/library/$',
+        TemplateView.as_view(template_name="library.html")),
+    url(r'^images/album/(?P<pk>[0-9]+)/$',
+        DetailView.as_view(template_name="album.html")),
+    url(r'^images/photo/(?P<pk>[0-9]+)/$',
+        DetailView.as_view(template_name="photo.html")),
 ]
 
 # (?P<pk>[0-9]+)/$
