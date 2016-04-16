@@ -52,6 +52,10 @@ class Photo(md.Model):
         return "{}(title={}, owner={}, date_published={}".format(
             name, self.title[:20], self.owner, _pub_date(self))
 
+    def get_url(self):
+        """Return string of url for single view."""
+        return '/images/photo/{}'.format(self.pk)
+
 
 @python_2_unicode_compatible
 class Album(md.Model):
@@ -105,6 +109,10 @@ class Album(md.Model):
             photo.save()
             if self.cover is None:
                 self.set_cover(photo)
+
+    def get_url(self):
+        """Return string of url to get to single album view."""
+        return '/images/album/{}'.format(self.pk)
 
 
 def _pub_date(obj):
