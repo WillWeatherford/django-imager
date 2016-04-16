@@ -27,6 +27,15 @@ GOOD_REG_PARAMS = {'username': 'CoolPerson',
 LINK_PATTERN = r'/accounts/activate/.*/'
 
 
+def user_from_response(response):
+    """Helper function to dig the user from the HTTPresponse."""
+    for dic in response.context[0]:
+        user = dic.get('user')
+        if user:
+            break
+    return user
+
+
 class UnauthenticatedCase(TestCase):
     """Testing when user is not logged in."""
 
@@ -39,7 +48,6 @@ class UnauthenticatedCase(TestCase):
         self.login_get_response = client.get(LOGIN)
         self.login_post_bad = client.post(LOGIN, BAD_LOGIN_PARAMS)
         self.logout_response = client.get(LOGOUT)
-        self.home_context = self.home_response.context[0]
 
     def test_no_users_in_db(self):
         """Make sure test session starts with empty database."""
@@ -63,11 +71,8 @@ class UnauthenticatedCase(TestCase):
 
     def test_no_authenticated_user(self):
         """Test that there is no authenticated user."""
-        for dic in self.home_context:
-            user = dic.get('user')
-            if user:
-                break
-        self.assertIsInstance(user, AnonymousUser)
+        user = user_from_response(self.home_response)
+        self.assertFalse(user.is_authenticated())
 
     def test_no_username_display(self):
         """Test that message displaying username does not appear."""
@@ -229,10 +234,7 @@ class AuthenticatedCase(TestCase):
 
     def test_login_bad_password_unauthenticated(self):
         """Test that bad password login attempt returns login page OK."""
-        for dic in self.login_post_bad.context[0]:
-            user = dic.get('user')
-            if user:
-                break
+        user = user_from_response(self.login_post_bad)
         self.assertIsInstance(user, AnonymousUser)
 
     def test_login_post_good_ok(self):
@@ -241,10 +243,7 @@ class AuthenticatedCase(TestCase):
 
     def test_login_post_good_authenticated_user(self):
         """Test that there is an authenticated user in response."""
-        for dic in self.login_post_good.context[0]:
-            user = dic.get('user')
-            if user:
-                break
+        user = user_from_response(self.login_post_good)
         self.assertIsInstance(user, User)
 
     def test_logged_in_logout_link(self):

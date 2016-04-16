@@ -11,6 +11,9 @@
     <h3>{{object.title}}</h3>
     {% for photo in object.photos.all %}
         <article class="photo-info">
+
+        <!-- other album info -->
+
             <p class="photo-title">{{photo.title}}</p>
             {% thumbnail photo.img_file "200" as img_file %}
                 <a href="/images/photo/{{photo.pk}}">
