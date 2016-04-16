@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.contrib.auth.decorators import login_required
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
@@ -25,10 +26,12 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home_page'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
-    url(r'^accounts/profile/$',
-        TemplateView.as_view(template_name="profile.html")),
-    url(r'^images/library/$',
-        TemplateView.as_view(template_name="library.html")),
+
+    url(r'^accounts/profile/$', login_required(
+        TemplateView.as_view(template_name="profile.html"))),
+    url(r'^images/library/$', login_required(
+        TemplateView.as_view(template_name="library.html"))),
+
     url(r'^images/album/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Album, template_name="album.html")),
     url(r'^images/photo/(?P<pk>[0-9]+)/$',

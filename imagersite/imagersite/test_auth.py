@@ -12,6 +12,8 @@ HOME = '/'
 REG = '/accounts/register/'
 LOGIN = '/accounts/login/'
 LOGOUT = '/accounts/logout/'
+PROFILE = '/accounts/profile/'
+LIBRARY = '/images/library/'
 
 BAD_LOGIN_PARAMS = {'username': 'NotRealUser', 'password': 'notsecret'}
 BAD_REG_PARAMS = {'username': 'NotRealUser',
@@ -48,6 +50,8 @@ class UnauthenticatedCase(TestCase):
         self.login_get_response = client.get(LOGIN)
         self.login_post_bad = client.post(LOGIN, BAD_LOGIN_PARAMS)
         self.logout_response = client.get(LOGOUT)
+        self.profile_response = client.get(PROFILE)
+        self.library_response = client.get(LIBRARY)
 
     def test_no_users_in_db(self):
         """Make sure test session starts with empty database."""
@@ -115,6 +119,16 @@ class UnauthenticatedCase(TestCase):
         """Test bad registration gives message when passwords don't match."""
         expected_msg = b'The two password fields didn&#39;t match.'
         self.assertIn(expected_msg, self.reg_post_bad.content)
+
+    def test_profile_login_required(self):
+        """Test that getting /accounts/profile/ redirects to login."""
+        self.assertEqual(self.profile_response.status_code, 302)
+        self.assertTrue(self.profile_response.url.startswith(LOGIN))
+
+    def test_library_login_required(self):
+        """Test that getting /images/library/ redirects to login."""
+        self.assertEqual(self.profile_response.status_code, 302)
+        self.assertTrue(self.profile_response.url.startswith(LOGIN))
 
 
 class RegistrationCase(TestCase):
