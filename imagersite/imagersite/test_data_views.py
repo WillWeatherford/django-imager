@@ -53,7 +53,8 @@ class AuthenticatedCase(TestCase):
             self.assertTrue(user.is_authenticated())
             self.assertTrue(context_user.is_authenticated())
 
-
+    # test that profile page is loaded from each response
+    # test that library page is accessible
     # test default image if no cover
     # test that owners see all of their albums
     # test that owners see all of their photos
