@@ -10,18 +10,31 @@
     <h4>{{user.username}}'s Library</h4>
 
     <section class="albums">
+        <h3>Albums</h3>
         {% for album in user.albums.all %}
             <article class="album-info">
-                <p "album-title">{{album.title}}</p>
-                <img src="{{album.cover.img_file.url}}">
+                <p class="album-title">{{album.title}}</p>
+
+                <!-- Need to set default image if no cover specified -->
+
+                {% thumbnail album.cover.img_file "200" as img_file %}
+                    <a href="/images/album/{{album.pk}}">
+                        <img src="{{img_file.url}}">
+                    </a>
+                {% endthumbnail %}
             </article>
         {% endfor %}
     </section>
-    <section "photos">
+    <section class="photos">
+        <h3>Photos</h3>
         {% for photo in user.photos.all %}
             <article class="photo-info">
-                <p "photo-title">{{photo.title}}</p>
-                <img src="{{photo.img_file.url}}">
+                <p class="photo-title">{{photo.title}}</p>
+                {% thumbnail photo.img_file "200" as img_file %}
+                    <a href="/images/photo/{{photo.pk}}">
+                        <img src="{{img_file.url}}">
+                    </a>
+                {% endthumbnail %}
             </article>
         {% endfor %}
     </section>

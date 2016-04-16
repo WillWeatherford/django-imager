@@ -18,6 +18,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from django.views.generic import TemplateView, DetailView
+from imager_images.models import Photo, Album
 from .views import HomeView
 
 urlpatterns = [
@@ -29,9 +30,9 @@ urlpatterns = [
     url(r'^images/library/$',
         TemplateView.as_view(template_name="library.html")),
     url(r'^images/album/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(template_name="album.html")),
+        DetailView.as_view(model=Album, template_name="album.html")),
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(template_name="photo.html")),
+        DetailView.as_view(model=Photo, template_name="photo.html")),
 ]
 
 # (?P<pk>[0-9]+)/$
