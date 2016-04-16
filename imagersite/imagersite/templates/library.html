@@ -21,14 +21,14 @@
                         <!-- Need to set default image if no cover specified -->
 
                         {% thumbnail album.cover.img_file "200" as img_file %}
-                            <a href="/images/album/{{album.pk}}">
+                            <a href="{{album.get_url}}">
                                 <img src="{{img_file.url}}">
                             </a>
 
                         {% empty %}
                             {% with MEDIA_URL|add:"/Users/hannahkrager/401-Python/django-imager/imagersite/media/doctorwho.jpeg" as path %}
                                 {% thumbnail path "200" as img %}
-                                    <a href="/images/album/{{album.pk}}">
+                                    <a href="{{album.get_url}}">
                                         <img src="{{img.url}}">
                                     </a>
                                 {% endthumbnail %}
@@ -49,7 +49,7 @@
                             <article class="photo-info">
                                 <p class="photo-title">{{photo.title}}</p>
                                 {% thumbnail photo.img_file "200" as file %}
-                                    <a href="/images/photo/{{photo.pk}}">
+                                    <a href="{{photo.get_url}}">
                                         <img src="{{file.url}}">
                                     </a>
                                     {% empty %}

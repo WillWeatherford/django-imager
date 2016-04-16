@@ -7,21 +7,31 @@
 
 {% block content %}
 
+
 <section class="albums">
     <h3>{{object.title}}</h3>
-    {% for photo in object.photos.all %}
-        <article class="photo-info">
+        <p>Sharing level: {{object.published}} | Date made public: {{object.date_published}}</p>
+        <p>Created: {{object.date_created}} | Edited: {{object.date_modified}}</p>
 
-        <!-- other album info -->
-
-            <p class="photo-title">{{photo.title}}</p>
-            {% thumbnail photo.img_file "200" as img_file %}
-                <a href="/images/photo/{{photo.pk}}">
-                    <img src="{{img_file.url}}">
-                </a>
-            {% endthumbnail %}
-        </article>
-    {% endfor %}
+            <div class="container">
+                <div class="row">
+                    {% for photo in user.photos.all %}
+                        <div class="col-sm-3">
+                            <article class="photo-info">
+                                <p class="photo-title">{{photo.title}}</p>
+                                {% thumbnail photo.img_file "200" as file %}
+                                    <a href="{{photo.get_url}}">
+                                        <img src="{{file.url}}">
+                                    </a>
+                                {% empty %}
+                                    <p>No Photo Found</p>
+                                {% endthumbnail %}
+                            </article>
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
 </section>
+
 
 {% endblock %}
