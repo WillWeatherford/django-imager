@@ -18,21 +18,11 @@
                     <article class="album-info">
                         <p class="album-title">{{album.title}}</p>
 
-                        <!-- Need to set default image if no cover specified -->
-
-                        {% thumbnail album.cover.img_file "200" as img_file %}
+                        {% thumbnail album.get_cover "200" as img_file %}
                             <a href="{{album.get_url}}">
                                 <img src="{{img_file.url}}">
                             </a>
-
-                        {% empty %}
-                            {% with MEDIA_URL|add:"/Users/hannahkrager/401-Python/django-imager/imagersite/media/doctorwho.jpeg" as path %}
-                                {% thumbnail path "200" as img %}
-                                    <a href="{{album.get_url}}">
-                                        <img src="{{img.url}}">
-                                    </a>
-                                {% endthumbnail %}
-                            {% endwith %}
+                            {% empty %}
                         {% endthumbnail %}
                     </article>
                     </div>

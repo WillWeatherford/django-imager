@@ -107,12 +107,19 @@ class Album(md.Model):
         for photo in self._owned_photos(photos):
             photo.albums.add(self)
             photo.save()
-            if self.cover is None:
-                self.set_cover(photo)
+            # if self.cover is None:
+            #     self.set_cover(photo)
 
     def get_url(self):
         """Return string of url to get to single album view."""
         return '/images/album/{}'.format(self.pk)
+
+    def get_cover(self):
+        """Return the user set cover of album or a default image."""
+        if self.cover:
+            return self.cover.img_file
+        item = Photo.objects.get(img_file='DEFAULT_IMAGE')
+        return item.img_file
 
 
 def _pub_date(obj):
