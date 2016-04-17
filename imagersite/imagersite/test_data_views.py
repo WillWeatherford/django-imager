@@ -13,7 +13,7 @@ HOME = '/'
 REG = '/accounts/register/'
 LOGIN = '/accounts/login/'
 LOGOUT = '/accounts/logout/'
-PROFILE = '/accounts/profile/'
+PROFILE = '/profile/'
 LIBRARY = '/images/library/'
 ALBUM = '/images/album/'
 PHOTO = '/images/photo/'
@@ -99,25 +99,31 @@ class AuthenticatedCase(TestCase):
         for session in self.users_sessions:
             response = session['profile_response']
             user = session['user']
+            ctx_user = user_from_response(response)
             match = re.search(FRIENDS_PAT, response.content.decode('utf-8'))
             num = int(match.groupdict()['num'])
-            self.assertEqual(user.profile.friends.count(), num)
+            self.assertEqual(user.profile.friends.count(),
+                             ctx_user.profile.friends.count(),)
 
     def test_photos_count_profile(self):
         """Test user sees correct number of photos on profile page."""
         for session in self.users_sessions:
             response = session['profile_response']
             user = session['user']
+            ctx_user = user_from_response(response)
             match = re.search(PHOTOS_PAT, response.content.decode('utf-8'))
-            self.assertEqual(user.photos.count(), int(match.groupdict()['num']))
+            self.assertEqual(user.photos.count(),
+                             ctx_user.photos.count(),)
 
     def test_albums_count_profile(self):
         """Test user sees correct number of albums on profile page."""
         for session in self.users_sessions:
             response = session['profile_response']
             user = session['user']
+            ctx_user = user_from_response(response)
             match = re.search(ALBUMS_PAT, response.content.decode('utf-8'))
-            self.assertEqual(user.albums.count(), int(match.groupdict()['num']))
+            self.assertEqual(user.albums.count(),
+                             ctx_user.albums.count(),)
 
     def test_library_ok(self):
         """Test that library page is accessible."""

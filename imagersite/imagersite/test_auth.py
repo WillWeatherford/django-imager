@@ -12,7 +12,7 @@ HOME = '/'
 REG = '/accounts/register/'
 LOGIN = '/accounts/login/'
 LOGOUT = '/accounts/logout/'
-PROFILE = '/accounts/profile/'
+PROFILE = '/profile/'
 LIBRARY = '/images/library/'
 
 BAD_LOGIN_PARAMS = {'username': 'NotRealUser', 'password': 'notsecret'}
