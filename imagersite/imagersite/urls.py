@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home_page'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
 
-    url(r'^accounts/profile/$', login_required(
+    url(r'^profile/$', login_required(
         TemplateView.as_view(template_name="profile.html"))),
     url(r'^images/library/$', login_required(
         TemplateView.as_view(template_name="library.html"))),
