@@ -6,6 +6,7 @@ from imager_profile.tests import UserFactory
 from imager_images.tests import TMP_MEDIA_ROOT, AlbumFactory, PhotoFactory
 from .test_auth import user_from_response
 from imager_images.models import Photo, Album
+import re
 
 DEFAULT_IMG = 'media/django-magic.jpg'
 HOME = '/'
@@ -20,6 +21,11 @@ PHOTO = '/images/photo/'
 NUM_USERS = 4
 NUM_ALBUMS = 4
 NUM_PHOTOS = 8
+
+NUM_PAT = r'(?P<num>[0-9])'
+FRIENDS_PAT = NUM_PAT + r' friends'
+ALBUMS_PAT = NUM_PAT + r' albums'
+PHOTOS_PAT = NUM_PAT + r' photos'
 
 
 @override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
@@ -88,8 +94,30 @@ class AuthenticatedCase(TestCase):
             user = session['user']
             self.assertIn(user.username.encode('utf-8'), response.content)
 
-    def test_counts_ok(self):
-        """Test user sees correct number of friends, albums and photos."""
+    def test_friends_count_profile(self):
+        """Test user sees correct number of friends on profile page."""
+        for session in self.users_sessions:
+            response = session['profile_response']
+            user = session['user']
+            match = re.search(FRIENDS_PAT, response.content.decode('utf-8'))
+            num = int(match.groupdict()['num'])
+            self.assertEqual(user.profile.friends.count(), num)
+
+    def test_photos_count_profile(self):
+        """Test user sees correct number of photos on profile page."""
+        for session in self.users_sessions:
+            response = session['profile_response']
+            user = session['user']
+            match = re.search(PHOTOS_PAT, response.content.decode('utf-8'))
+            self.assertEqual(user.photos.count(), int(match.groupdict()['num']))
+
+    def test_albums_count_profile(self):
+        """Test user sees correct number of albums on profile page."""
+        for session in self.users_sessions:
+            response = session['profile_response']
+            user = session['user']
+            match = re.search(ALBUMS_PAT, response.content.decode('utf-8'))
+            self.assertEqual(user.albums.count(), int(match.groupdict()['num']))
 
     def test_library_ok(self):
         """Test that library page is accessible."""
@@ -161,10 +189,3 @@ class AuthenticatedCase(TestCase):
             for photo in user.photos.all():
                 response = client.get(photo.get_url())
                 self.assertEqual(response.status_code, 200)
-
-    # test default image if no cover
-    # test that owners don't see anyone elses's albums
-    # test that owners don't see anyone else's photos
-    # test that each album link from library can be clicked on (??)
-    # test that each photo link in library and in album can be clicked on
-
