@@ -54,7 +54,7 @@ class Photo(md.Model):
 
     def get_url(self):
         """Return string of url for single view."""
-        return '/images/photo/{}'.format(self.pk)
+        return '/images/photo/{}/'.format(self.pk)
 
 
 @python_2_unicode_compatible
@@ -112,7 +112,7 @@ class Album(md.Model):
 
     def get_url(self):
         """Return string of url to get to single album view."""
-        return '/images/album/{}'.format(self.pk)
+        return '/images/album/{}/'.format(self.pk)
 
     def get_cover(self):
         """Return the user set cover of album or a default image."""

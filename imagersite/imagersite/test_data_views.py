@@ -63,10 +63,10 @@ class AuthenticatedCase(TestCase):
         """Test that all users are logged in."""
         for session in self.users_sessions:
             user = session['user']
-            context_user = user_from_response(session['login_response'])
-            self.assertEqual(user, context_user)
+            ctx_user = user_from_response(session['login_response'])
+            self.assertEqual(user, ctx_user)
             self.assertTrue(user.is_authenticated())
-            self.assertTrue(context_user.is_authenticated())
+            self.assertTrue(ctx_user.is_authenticated())
 
     def test_login_to_profile(self):
         """Test that response has redirected to profile page."""
@@ -75,6 +75,22 @@ class AuthenticatedCase(TestCase):
             self.assertEqual(login_response.status_code, 200)
             self.assertEqual(login_response.request['PATH_INFO'], PROFILE)
 
+    def test_profile_ok(self):
+        """Test that user can access profile ok."""
+        for session in self.users_sessions:
+            response = session['profile_response']
+            self.assertEqual(response.status_code, 200)
+
+    def test_profile_username(self):
+        """Test that user sees their username on profile page."""
+        for session in self.users_sessions:
+            response = session['profile_response']
+            user = session['user']
+            self.assertIn(user.username.encode('utf-8'), response.content)
+
+    def test_counts_ok(self):
+        """Test user sees correct number of friends, albums and photos."""
+
     def test_library_ok(self):
         """Test that library page is accessible."""
         for session in self.users_sessions:
@@ -82,16 +98,71 @@ class AuthenticatedCase(TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_library_username(self):
-        """Test that library page is accessible."""
+        """Test that the user sees their username on library page."""
         for session in self.users_sessions:
             response = session['lib_response']
             user = session['user']
             self.assertIn(user.username.encode('utf-8'), response.content)
 
+    def test_library_albums(self):
+        """Test that all of user's album's titles display in library."""
+        for session in self.users_sessions:
+            response = session['lib_response']
+            user = session['user']
+            ctx_user = user_from_response(response)
+            for album in user.albums.all():
+                self.assertIn(album, ctx_user.albums.all())
+
+    def test_library_photos(self):
+        """Test that all of user's album's titles display in library."""
+        for session in self.users_sessions:
+            response = session['lib_response']
+            user = session['user']
+            ctx_user = user_from_response(response)
+            for photo in user.photos.all():
+                self.assertIn(photo, ctx_user.photos.all())
+
+    def test_only_user_albums(self):
+        """Test that only user's album's titles display in library."""
+        for session in self.users_sessions:
+            response = session['lib_response']
+            other_users = (ses['user'] for ses in self.users_sessions
+                           if ses != session)
+            ctx_user = user_from_response(response)
+            for album in ctx_user.albums.all():
+                for other in other_users:
+                    self.assertNotIn(album, other.albums.all())
+
+    def test_only_user_photos(self):
+        """Test that all of user's album's titles display in library."""
+        for session in self.users_sessions:
+            response = session['lib_response']
+            other_users = (ses['user'] for ses in self.users_sessions
+                           if ses != session)
+            ctx_user = user_from_response(response)
+            for photo in ctx_user.photos.all():
+                for other in other_users:
+                    self.assertNotIn(photo, other.photos.all())
+
+    def test_album_page(self):
+        """Test that every album page can be reached by get."""
+        for session in self.users_sessions:
+            user = session['user']
+            client = session['client']
+            for album in user.albums.all():
+                response = client.get(album.get_url())
+                self.assertEqual(response.status_code, 200)
+
+    def test_photo_page(self):
+        """Test that every photo page can be reached by get."""
+        for session in self.users_sessions:
+            user = session['user']
+            client = session['client']
+            for photo in user.photos.all():
+                response = client.get(photo.get_url())
+                self.assertEqual(response.status_code, 200)
 
     # test default image if no cover
-    # test that owners see all of their albums
-    # test that owners see all of their photos
     # test that owners don't see anyone elses's albums
     # test that owners don't see anyone else's photos
     # test that each album link from library can be clicked on (??)
