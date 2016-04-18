@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
 {% block title %}
-    {{user.username}}'s Profile
+  {{user.username}}'s Profile
 {% endblock %}
 
 {% block content %}
 
-    <h4>{{user.username}}'s Profile</h4>
+  <h3>{{user.username}}'s Profile</h3>
 
-    <p>Location: {{user.profile.location}}</p>
+  <p>Location: {{user.profile.location}}</p>
 
-    <p>Camera: {{user.profile.camera}}</p>
+  <p>Camera: {{user.profile.camera}}</p>
 
-    <p>Favorite Style: {{user.profile.fav_photo}}</p>
+  <p>Favorite Style: {{user.profile.fav_photo}}</p>
 
-    <p>You have {{user.profile.friends.count}} friends.</p>
+  <p>You have {{user.profile.friends.count}} friends.</p>
 
-    <p>You have {{user.albums.count}} albums and {{user.photos.count}} photos.</p>
+  <p>You have {{user.albums.count}} albums and {{user.photos.count}} photos.</p>
 
 {% endblock %}

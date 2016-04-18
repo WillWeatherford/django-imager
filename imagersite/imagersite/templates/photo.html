@@ -2,30 +2,29 @@
 {% load thumbnail %}
 
 {% block title %}
-    {{obj.title}}
+  {{obj.title}}
 {% endblock %}
 
 {% block content %}
 <!-- Fix scaling of image. keeping it small warps it. -->
 <section class="single-photo">
-    <article class="single-photo-info">
-
-        <h3>{{object.title}}</h3>
-        <p>Sharing level: {{object.published}} | Date made public: {{object.date_published}}</p>
-        <p>Uploaded: {{object.date_uploaded}} | Edited: {{object.date_modified}}</p>
-        {% if object.albums.all %}
-            <p>Albums this photo is in:</p>
-            {% for album in object.albums.all %}
-                <a href="{{album.get_url}}">
-                    <p>{{album.title}}</p>
-                </a>
-            {% endfor %}
-            {% else %}
-            <p>This photo is not in any albums.</p>
-        {% endif %}
-        <img src="{{object.img_file.url}}">
-        <h5>Description: {{object.description}}</h5>
-    </article>
+  <article class="single-photo-info">
+    <h3>{{object.title}}</h3>
+    <p>Sharing level: {{object.published}} | Date made public: {{object.date_published}}</p>
+    <p>Uploaded: {{object.date_uploaded}} | Edited: {{object.date_modified}}</p>
+    {% if object.albums.count %}
+      <p>Albums this photo is in:</p>
+      {% for album in object.albums.all %}
+        <a href="{{album.get_url}}">
+          <p>{{album.title}}</p>
+        </a>
+      {% endfor %}
+    {% else %}
+      <p>This photo is not in any albums.</p>
+    {% endif %}
+    <img src="{{object.img_file.url}}">
+    <h5>Description: {{object.description}}</h5>
+  </article>
 </section>
 
 {% endblock %}
