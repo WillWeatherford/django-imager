@@ -7,48 +7,47 @@
 
 {% block content %}
 
-    <h4>{{user.username}}'s Library</h4>
+  <h3>{{user.username}}'s Library</h3>
 
-    <section class="albums">
-        <h3>Albums</h3>
-        <div class="container">
-            <div class="row">
-                {% for album in user.albums.all %}
-                    <div class="col-sm-3">
-                    <article class="album-info">
-                        <p class="album-title">{{album.title}}</p>
-
-                        {% thumbnail album.get_cover "200" as img_file %}
-                            <a href="{{album.get_url}}">
-                                <img src="{{img_file.url}}">
-                            </a>
-                            {% empty %}
-                        {% endthumbnail %}
-                    </article>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-    <section class="photos">
-        <h3>Photos</h3>
-        <div class="container">
-                <div class="row">
-                    {% for photo in user.photos.all %}
-                        <div class="col-sm-3">
-                            <article class="photo-info">
-                                <p class="photo-title">{{photo.title}}</p>
-                                {% thumbnail photo.img_file "200" as file %}
-                                    <a href="{{photo.get_url}}">
-                                        <img src="{{file.url}}">
-                                    </a>
-                                    {% empty %}
-                                    <p>No Photo Found</p>
-                                {% endthumbnail %}
-                            </article>
-                        </div>
-                    {% endfor %}
-            </div>
-        </div>
-    </section>
+  <section class="albums">
+    <h4>Albums</h4>
+    <div class="container">
+      <div class="row">
+        {% for album in user.albums.all %}
+          <div class="col-sm-3">
+          <article class="album-info">
+            <p class="album-title">{{album.title}}</p>
+            {% thumbnail album.get_cover "200" as img_file %}
+              <a href="{{album.get_url}}">
+                  <img src="{{img_file.url}}">
+              </a>
+              {% empty %}
+            {% endthumbnail %}
+          </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  <section class="photos">
+    <h4>Photos</h4>
+    <div class="container">
+      <div class="row">
+        {% for photo in user.photos.all %}
+          <div class="col-sm-3">
+            <article class="photo-info">
+              <p class="photo-title">{{photo.title}}</p>
+              {% thumbnail photo.img_file "200" as file %}
+                <a href="{{photo.get_url}}">
+                  <img src="{{file.url}}">
+                </a>
+                {% empty %}
+                  <p>No Photo Found</p>
+              {% endthumbnail %}
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
 {% endblock %}
