@@ -36,11 +36,20 @@ urlpatterns = [
         DetailView.as_view(model=Album, template_name="album.html")),
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Photo, template_name="photo.html")),
+
     url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
         UpdateView.as_view(
             model=Album,
             template_name="edit_obj.html",
             fields=['title', 'description', 'published', 'cover'],
+            success_url='/images/library/',
+        )),
+
+    url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
+        UpdateView.as_view(
+            model=Photo,
+            template_name="edit_obj.html",
+            fields=['albums', 'title', 'description', 'published'],
             success_url='/images/library/',
         )),
     url(r'^images/photo/add/$', CreatePhotoView.as_view()),

@@ -47,6 +47,9 @@
                 {% empty %}
                   <p>No Photo Found</p>
               {% endthumbnail %}
+            <p>
+              <a href="/images/photo/{{photo.pk}}/edit/">Edit</a>
+            </p>
             </article>
           </div>
         {% endfor %}
