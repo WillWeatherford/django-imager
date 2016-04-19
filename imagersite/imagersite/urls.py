@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.views.generic import TemplateView, DetailView, CreateView
 from imager_images.models import Photo, Album
-from .views import HomeView
+from .views import HomeView, CreatePhotoView
 from .forms import PhotoForm
 
 urlpatterns = [
@@ -38,10 +38,13 @@ urlpatterns = [
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Photo, template_name="photo.html")),
 
-    url(r'^images/photo/add/$',
-        CreateView.as_view(
-            form_class=PhotoForm,
-            template_name='create_photo.html')),
+    url(r'^images/photo/add/$', CreatePhotoView.as_view()),
+
+    # url(r'^images/photo/add/$',
+    #     CreateView.as_view(
+    #         form_class=PhotoForm,
+    #         template_name='create_photo.html',
+    #         success_url='/images/library/')),
 ]
 
 # (?P<pk>[0-9]+)/$
