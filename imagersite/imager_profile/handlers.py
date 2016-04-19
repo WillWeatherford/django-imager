@@ -2,11 +2,11 @@
 """Handlers for pop-save and pre-delete events on User model."""
 from __future__ import unicode_literals
 from django.conf import settings
-from django.db.models.signals import post_save
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_save, pre_delete
+from registration.signals import user_activated
 from django.dispatch import receiver
 from .models import ImagerProfile
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group
 import logging
 
 MODELS = ['imagerprofile', 'photo', 'album']
@@ -32,12 +32,8 @@ def add_permissions(sender, **kwargs):
     if kwargs.get('created', False):
         try:
             user = kwargs['instance']
-            perm = Permission.objects.get(codename='add_photo')
-            user.user_permission.add(perm)
-            # user.save()
-            # for model in MODELS:
-            #     perm_set = Permission.objects.filter(codename__contains=model)
-            #     user.user_permissions.set(perm_set)
+            active_group = Group.objects.get(name='Active Users')
+            user.groups.add(active_group)
         except (KeyError, ValueError):
             logger.error('Unable to add Permissions for User instance.')
 

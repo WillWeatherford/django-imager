@@ -1,8 +1,8 @@
 """Views at the configuration root level."""
 
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, UpdateView
 from imager_images.models import Photo, Album
-# from .forms import PhotoForm
+from .forms import AlbumForm
 DEFAULT_IMG_URL = 'media/django-magic.jpg'
 
 
@@ -44,19 +44,27 @@ class CreatePhotoView(CreateView):
 class CreateAlbumView(CreateView):
     """Create a new Album to the database."""
 
-    model = Album
+    form_class = AlbumForm
     template_name = 'create_obj.html'
     success_url = '/images/library/'
-    fields = [
-        # 'photos',
-        'title',
-        'description',
-        'published',
-        'cover',
-    ]
+    # fields = [
+    #     'photos',
+    #     'title',
+    #     'description',
+    #     'published',
+    #     'cover',
+    # ]
 
     def form_valid(self, form):
         """Insert the user from request context into the form as the owner."""
         form.instance.owner = self.request.user
         return super(CreateAlbumView, self).form_valid(form)
 
+
+# class EditProfileView(UpdateView):
+#     """Allow the user to edit their profile."""
+
+#     model = ImagerProfile,
+#     template_name = "edit_obj.html",
+#     fields = ['friends', 'location', 'camera', 'fav_photo'],
+#     success_url = '/profile/'

@@ -20,6 +20,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.views.generic import TemplateView, DetailView, UpdateView
 from imager_images.models import Photo, Album
+from imager_profile.models import ImagerProfile
 from .views import HomeView, CreatePhotoView, CreateAlbumView
 
 urlpatterns = [
@@ -52,6 +53,10 @@ urlpatterns = [
             fields=['albums', 'title', 'description', 'published'],
             success_url='/images/library/',
         )),
+    # url(r'^profile/edit/$',
+    #     UpdateView.as_view(
+    #         ,
+    #     )),
     url(r'^images/photo/add/$', CreatePhotoView.as_view()),
     url(r'^images/album/add/$', CreateAlbumView.as_view()),
 ]
