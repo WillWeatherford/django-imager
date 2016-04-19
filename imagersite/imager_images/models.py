@@ -66,6 +66,7 @@ class Album(md.Model):
     cover = md.ForeignKey('Photo', on_delete=md.CASCADE,
                           related_name='covered_albums', null=True,
                           default=None)
+    # albums = md.ManyToManyField('Photo', related_name='albums')
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)

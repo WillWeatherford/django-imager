@@ -18,10 +18,9 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView, DetailView, CreateView
+from django.views.generic import TemplateView, DetailView
 from imager_images.models import Photo, Album
-from .views import HomeView, CreatePhotoView
-from .forms import PhotoForm
+from .views import HomeView, CreatePhotoView, CreateAlbumView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -39,12 +38,7 @@ urlpatterns = [
         DetailView.as_view(model=Photo, template_name="photo.html")),
 
     url(r'^images/photo/add/$', CreatePhotoView.as_view()),
-
-    # url(r'^images/photo/add/$',
-    #     CreateView.as_view(
-    #         form_class=PhotoForm,
-    #         template_name='create_photo.html',
-    #         success_url='/images/library/')),
+    url(r'^images/album/add/$', CreateAlbumView.as_view()),
 ]
 
 # (?P<pk>[0-9]+)/$

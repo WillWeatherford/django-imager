@@ -1,7 +1,7 @@
 """Views at the configuration root level."""
 
 from django.views.generic import TemplateView, CreateView
-from imager_images.models import Photo
+from imager_images.models import Photo, Album
 # from .forms import PhotoForm
 DEFAULT_IMG_URL = 'media/django-magic.jpg'
 
@@ -22,11 +22,10 @@ class HomeView(TemplateView):
 
 
 class CreatePhotoView(CreateView):
-    """Create."""
+    """Create a new Photo to the database."""
 
-    # form_class = PhotoForm
     model = Photo
-    template_name = 'create_photo.html'
+    template_name = 'create_obj.html'
     success_url = '/images/library/'
     fields = [
         'albums',
@@ -40,3 +39,23 @@ class CreatePhotoView(CreateView):
         """Insert the user from request context into the form as the owner."""
         form.instance.owner = self.request.user
         return super(CreatePhotoView, self).form_valid(form)
+
+
+class CreateAlbumView(CreateView):
+    """Create a new Album to the database."""
+
+    model = Album
+    template_name = 'create_obj.html'
+    success_url = '/images/library/'
+    fields = [
+        # 'photos',
+        'title',
+        'description',
+        'published',
+        'cover',
+    ]
+
+    def form_valid(self, form):
+        """Insert the user from request context into the form as the owner."""
+        form.instance.owner = self.request.user
+        return super(CreateAlbumView, self).form_valid(form)
