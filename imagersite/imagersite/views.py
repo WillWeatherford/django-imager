@@ -59,3 +59,4 @@ class CreateAlbumView(CreateView):
         """Insert the user from request context into the form as the owner."""
         form.instance.owner = self.request.user
         return super(CreateAlbumView, self).form_valid(form)
+

@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, UpdateView
 from imager_images.models import Photo, Album
 from .views import HomeView, CreatePhotoView, CreateAlbumView
 
@@ -36,7 +36,13 @@ urlpatterns = [
         DetailView.as_view(model=Album, template_name="album.html")),
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Photo, template_name="photo.html")),
-
+    url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
+        UpdateView.as_view(
+            model=Album,
+            template_name="edit_obj.html",
+            fields=['title', 'description', 'published', 'cover'],
+            success_url='/images/library/',
+        )),
     url(r'^images/photo/add/$', CreatePhotoView.as_view()),
     url(r'^images/album/add/$', CreateAlbumView.as_view()),
 ]
