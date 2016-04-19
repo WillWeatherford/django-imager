@@ -39,22 +39,28 @@ urlpatterns = [
         DetailView.as_view(model=Photo, template_name="photo.html")),
 
     url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
-        permission_required('imager_images.change_album', '/accounts/login/')(
-            UpdateView.as_view(
+        login_required(
+            permission_required(
+                'imager_images.change_album',
+                raise_exception=True,
+            )(UpdateView.as_view(
                 model=Album,
                 template_name="edit_obj.html",
                 fields=['title', 'description', 'published', 'cover'],
                 success_url='/images/library/',
-            ))),
+            )))),
 
     url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
-        permission_required('imager_images.change_photo', '/accounts/login/')(
-            UpdateView.as_view(
+        login_required(
+            permission_required(
+                'imager_images.change_photo',
+                raise_exception=True,
+            )(UpdateView.as_view(
                 model=Photo,
                 template_name="edit_obj.html",
                 fields=['albums', 'title', 'description', 'published'],
                 success_url='/images/library/',
-            ))),
+            )))),
     # url(r'^profile/edit/$',
     #     UpdateView.as_view(
     #         ,
