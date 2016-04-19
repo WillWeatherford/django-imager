@@ -18,9 +18,10 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, CreateView
 from imager_images.models import Photo, Album
 from .views import HomeView
+from .forms import PhotoForm
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -36,6 +37,11 @@ urlpatterns = [
         DetailView.as_view(model=Album, template_name="album.html")),
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Photo, template_name="photo.html")),
+
+    url(r'^images/photo/add/$',
+        CreateView.as_view(
+            form_class=PhotoForm,
+            template_name='create_photo.html')),
 ]
 
 # (?P<pk>[0-9]+)/$
