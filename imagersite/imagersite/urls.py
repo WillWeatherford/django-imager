@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
@@ -39,20 +39,22 @@ urlpatterns = [
         DetailView.as_view(model=Photo, template_name="photo.html")),
 
     url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
-        UpdateView.as_view(
-            model=Album,
-            template_name="edit_obj.html",
-            fields=['title', 'description', 'published', 'cover'],
-            success_url='/images/library/',
-        )),
+        permission_required('imager_images.change_album', '/accounts/login/')(
+            UpdateView.as_view(
+                model=Album,
+                template_name="edit_obj.html",
+                fields=['title', 'description', 'published', 'cover'],
+                success_url='/images/library/',
+            ))),
 
     url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
-        UpdateView.as_view(
-            model=Photo,
-            template_name="edit_obj.html",
-            fields=['albums', 'title', 'description', 'published'],
-            success_url='/images/library/',
-        )),
+        permission_required('imager_images.change_photo', '/accounts/login/')(
+            UpdateView.as_view(
+                model=Photo,
+                template_name="edit_obj.html",
+                fields=['albums', 'title', 'description', 'published'],
+                success_url='/images/library/',
+            ))),
     # url(r'^profile/edit/$',
     #     UpdateView.as_view(
     #         ,

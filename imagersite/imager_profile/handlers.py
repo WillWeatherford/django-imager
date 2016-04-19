@@ -26,7 +26,7 @@ def ensure_imager_profile(sender, **kwargs):
             logger.error('Unable to create ImagerProfile for User instance.')
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+@receiver(user_activated, sender=settings.AUTH_USER_MODEL)
 def add_permissions(sender, **kwargs):
     """Create and save an ImagerProfile after every new User is created."""
     if kwargs.get('created', False):
