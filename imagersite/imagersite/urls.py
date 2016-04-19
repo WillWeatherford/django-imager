@@ -22,6 +22,7 @@ from django.views.generic import TemplateView, DetailView, UpdateView
 from imager_images.models import Photo, Album
 from imager_profile.models import ImagerProfile
 from .views import HomeView, CreatePhotoView, CreateAlbumView
+from .forms import AlbumForm
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -45,8 +46,9 @@ urlpatterns = [
                 raise_exception=True,
             )(UpdateView.as_view(
                 model=Album,
+                form_class=AlbumForm,
                 template_name="edit_obj.html",
-                fields=['title', 'description', 'published', 'cover'],
+                # fields=['title', 'description', 'published', 'cover'],
                 success_url='/images/library/',
             )))),
 
@@ -65,8 +67,20 @@ urlpatterns = [
     #     UpdateView.as_view(
     #         ,
     #     )),
-    url(r'^images/photo/add/$', CreatePhotoView.as_view()),
-    url(r'^images/album/add/$', CreateAlbumView.as_view()),
+    url(r'^images/photo/add/$',
+        login_required(
+            permission_required(
+                'imager_images.change_photo',
+                raise_exception=True,
+            )(CreatePhotoView.as_view())
+        )),
+    url(r'^images/album/add/$',
+        login_required(
+            permission_required(
+                'imager_images.change_photo',
+                raise_exception=True,
+            )(CreateAlbumView.as_view())
+        ))
 ]
 
 # (?P<pk>[0-9]+)/$
