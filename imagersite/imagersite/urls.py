@@ -74,9 +74,7 @@ urlpatterns = [
             )(CreateAlbumView.as_view())
         )),
     # url(r'^profile/edit/$',
-    #     UpdateView.as_view(
-    #         ,
-    #     )),
+    #     UpdateView.as_view()),
 ]
 
 # (?P<pk>[0-9]+)/$
