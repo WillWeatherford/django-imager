@@ -38,7 +38,13 @@ urlpatterns = [
     url(r'^accounts/', include('registration.backends.hmac.urls')),
     url(r'^profile/$', login_required(
         TemplateView.as_view(template_name="profile.html"))),
-    url(r'^profile/edit/$', edit_profile),
+
+    url(r'^profile/edit/$',
+        login_required(
+            permission_required(
+                'auth.change_user',
+                raise_exception=True)(edit_profile)
+        )),
 
     url(r'^images/library/$', login_required(
         TemplateView.as_view(template_name="library.html"))),
@@ -78,9 +84,7 @@ urlpatterns = [
             )(CreateAlbumView.as_view())
         )),
 
-
     # url(r'^profile/edit/$', EditProfileView.as_view()),
-
 ]
 
 
