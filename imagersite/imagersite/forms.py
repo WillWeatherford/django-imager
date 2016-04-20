@@ -36,3 +36,10 @@ class ImagerProfileForm(forms.ModelForm):
     class Meta:
         model = ImagerProfile
         exclude = ['user', 'friends']
+
+
+UserProfileFormSet = inlineformset_factory(
+    User,
+    ImagerProfile,
+    fields=('camera', 'location')
+)

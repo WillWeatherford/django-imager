@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, CreateView, UpdateView
 from imager_images.models import Photo, Album
-from .forms import AlbumForm, UserForm, ImagerProfileForm
+from imager_profile.models import ImagerProfile
+from .forms import AlbumForm, UserForm, ImagerProfileForm, UserProfileFormSet
 DEFAULT_IMG_URL = 'media/django-magic.jpg'
 
 
@@ -123,9 +124,11 @@ class EditPhotoView(UpdateView):
 
 
 def edit_profile(request):
+    """Allow user to edit their ImagerProfile, and limited fields of User."""
     user = request.user
     profile = request.user.profile
     if request.method == 'POST':
+        # import pdb;pdb.set_trace()
         user_form = UserForm(request.POST, instance=user)
         profile_form = ImagerProfileForm(request.POST, instance=profile)
         if user_form.is_valid() and profile_form.is_valid():
@@ -134,25 +137,30 @@ def edit_profile(request):
             return HttpResponseRedirect('/profile/')
     user_form = UserForm(instance=user)
     profile_form = ImagerProfileForm(instance=profile)
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'edit_profile.html', context)
 
 
-# class EditProfileView(TemplateView):
-#     """Allow the user to edit their profile."""
+class EditProfileView(UpdateView):
+    """Allow the user to edit their profile."""
 
-#     template_name = "edit_profile.html"
-#     # fields = ['friends', 'location', 'camera', 'fav_photo'],
-#     success_url = '/profile/'
+    model = User
+    form_class = UserProfileFormSet
+    template_name = "edit_profile2.html"
+    # fields = ['user__first_name', 'user__last_name', 'camera']
+    success_url = '/profile/'
 
-#     def get_context_data(self, *args, **kwargs):
-#         """Include the formset in the context data."""
-#         data = super(EditProfileView, self).get_context_data(*args, **kwargs)
-#         data['formset'] = UserProfileFormSet(instance=self.request.user)
-#         return data
+    def get_object(self, queryset=None):
+        """Allow only photos belonging to current user as the view queryset."""
+        self.kwargs['pk'] = self.request.user.pk
+        return super(EditProfileView, self).get_object(queryset=queryset)
 
+    # def get_context_data(self, *args, **kwargs):
+    #     """Include the formset in the context data."""
+    #     data = super(EditProfileView, self).get_context_data(*args, **kwargs)
+    #     data['formset'] = UserProfileFormSet(instance=self.request.user)
+    #     return data
 
     # def form_valid(self):
     #     pass
-

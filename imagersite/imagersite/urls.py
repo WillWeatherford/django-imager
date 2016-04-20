@@ -27,6 +27,7 @@ from .views import (
     CreateAlbumView,
     EditAlbumView,
     EditPhotoView,
+    EditProfileView,
     edit_profile
 )
 
@@ -35,9 +36,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home_page'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
-
     url(r'^profile/$', login_required(
         TemplateView.as_view(template_name="profile.html"))),
+    url(r'^profile/edit/$', edit_profile),
+
     url(r'^images/library/$', login_required(
         TemplateView.as_view(template_name="library.html"))),
 
@@ -60,21 +62,25 @@ urlpatterns = [
                 'imager_images.change_photo',
                 raise_exception=True,
             )(EditPhotoView.as_view()))),
+
     url(r'^images/photo/add/$',
         login_required(
             permission_required(
-                'imager_images.change_photo',
+                'imager_images.add_photo',
                 raise_exception=True,
             )(CreatePhotoView.as_view())
         )),
     url(r'^images/album/add/$',
         login_required(
             permission_required(
-                'imager_images.change_photo',
+                'imager_images.add_album',
                 raise_exception=True,
             )(CreateAlbumView.as_view())
         )),
-    url(r'^profile/edit/$', edit_profile),
+
+
+    # url(r'^profile/edit/$', EditProfileView.as_view()),
+
 ]
 
 # (?P<pk>[0-9]+)/$
