@@ -28,7 +28,7 @@ from .views import (
     EditAlbumView,
     EditPhotoView,
     EditProfileView,
-    edit_profile
+    edit_profile,
 )
 
 
@@ -83,7 +83,6 @@ urlpatterns = [
 
 ]
 
-# (?P<pk>[0-9]+)/$
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

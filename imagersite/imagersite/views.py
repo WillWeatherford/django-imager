@@ -31,13 +31,7 @@ class CreatePhotoView(CreateView):
     model = Photo
     template_name = 'create_obj.html'
     success_url = '/images/library/'
-    fields = [
-        'albums',
-        'img_file',
-        'title',
-        'description',
-        'published',
-    ]
+    fields = ['albums', 'img_file', 'title', 'description', 'published']
 
     def form_valid(self, form):
         """Insert the user from request context into the form as the owner."""
@@ -58,12 +52,6 @@ class CreateAlbumView(CreateView):
     form_class = AlbumForm
     template_name = 'create_obj.html'
     success_url = '/images/library/'
-    fields = [
-        'cover',
-        'title',
-        'description',
-        'published',
-    ]
 
     def form_valid(self, form):
         """Insert the user from request context into the form as the owner."""
@@ -73,32 +61,6 @@ class CreateAlbumView(CreateView):
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super(CreateAlbumView, self).get_form(form_class=form_class)
-        form.fields['photos'].queryset = self.request.user.photos
-        return form
-
-
-class EditAlbumView(UpdateView):
-    """Allows user to edit their own photos."""
-
-    model = Album
-    form_class = AlbumForm
-    template_name = "edit_obj.html"
-    success_url = '/images/library/'
-    fields = [
-        'cover',
-        'title',
-        'description',
-        'published',
-    ]
-
-    def get(self, request, *args, **kwargs):
-        """Allow only albums belonging to current user as the view queryset."""
-        self.queryset = request.user.albums
-        return super(EditAlbumView, self).get(request, *args, **kwargs)
-
-    def get_form(self, form_class=None):
-        """Return an instance of the form to be used in this view."""
-        form = super(EditAlbumView, self).get_form(form_class=form_class)
         form.fields['photos'].queryset = self.request.user.photos
         return form
 
@@ -123,12 +85,32 @@ class EditPhotoView(UpdateView):
         return form
 
 
+class EditAlbumView(UpdateView):
+    """Allows user to edit their own photos."""
+
+    model = Album
+    form_class = AlbumForm
+    template_name = "edit_obj.html"
+    success_url = '/images/library/'
+    fields = ['cover', 'title', 'description', 'published']
+
+    def get(self, request, *args, **kwargs):
+        """Allow only albums belonging to current user as the view queryset."""
+        self.queryset = request.user.albums
+        return super(EditAlbumView, self).get(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        form = super(EditAlbumView, self).get_form(form_class=form_class)
+        form.fields['photos'].queryset = self.request.user.photos
+        return form
+
+
 def edit_profile(request):
     """Allow user to edit their ImagerProfile, and limited fields of User."""
     user = request.user
     profile = request.user.profile
     if request.method == 'POST':
-        # import pdb;pdb.set_trace()
         user_form = UserForm(request.POST, instance=user)
         profile_form = ImagerProfileForm(request.POST, instance=profile)
         if user_form.is_valid() and profile_form.is_valid():
@@ -137,7 +119,6 @@ def edit_profile(request):
             return HttpResponseRedirect('/profile/')
     user_form = UserForm(instance=user)
     profile_form = ImagerProfileForm(instance=profile)
-    # import pdb;pdb.set_trace()
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'edit_profile.html', context)
 
