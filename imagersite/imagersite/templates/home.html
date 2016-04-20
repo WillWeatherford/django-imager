@@ -1,19 +1,18 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Home
+  Home
 {% endblock %}
 
 {% block content %}
+  <p>
+    {{photo_obj}}
+  </p>
 
-    <p>
-        {{photo_obj}}
-    </p>
-
-    <p>
-        {{testval}}
-    </p>
-
+  <p>
+    {{testval}}
+  </p>
+  <div class="single-photo-info">
     <img src="{{img_url}}">
-
+  </div>
 {% endblock %}

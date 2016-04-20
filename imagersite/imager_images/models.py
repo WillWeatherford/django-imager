@@ -5,7 +5,8 @@ from django.utils.encoding import python_2_unicode_compatible
 
 PUB_CHOICES = ['private', 'shared', 'public']
 PUB_DEFAULT = PUB_CHOICES[0]
-PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
+PHOTO_PUB_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
+ALBUM_PUB_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
 DATE_FORMAT = '%d %B %Y %I:%M%p'
 
 
@@ -27,9 +28,11 @@ class PublicManager(md.Manager):
 class Photo(md.Model):
     """Represents a single image in the database."""
 
-    owner = md.ForeignKey(settings.AUTH_USER_MODEL, on_delete=md.CASCADE,
-                          related_name='photos')
-    albums = md.ManyToManyField('Album', related_name='photos')
+    owner = md.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=md.CASCADE,
+        related_name='photos')
+    albums = md.ManyToManyField('Album', related_name='photos', blank=True)
     img_file = md.ImageField(upload_to='img_files')
     title = md.CharField(max_length=255)
     description = md.TextField()
@@ -37,7 +40,7 @@ class Photo(md.Model):
     date_modified = md.DateTimeField(auto_now=True)
     date_published = md.DateTimeField(null=True)
     published = md.CharField(max_length=255,
-                             choices=PUB_FIELD_CHOICES,
+                             choices=PHOTO_PUB_CHOICES,
                              default=PUB_DEFAULT)
     objects = md.Manager()
     public = PublicManager()
@@ -52,24 +55,37 @@ class Photo(md.Model):
         return "{}(title={}, owner={}, date_published={}".format(
             name, self.title[:20], self.owner, _pub_date(self))
 
+    def get_url(self):
+        """Return string of url for single view."""
+        return '/images/photo/{}/'.format(self.pk)
+
 
 @python_2_unicode_compatible
 class Album(md.Model):
     """Represents a collection of images in the database."""
 
-    owner = md.ForeignKey(settings.AUTH_USER_MODEL, on_delete=md.CASCADE,
-                          related_name='albums')
-    cover = md.ForeignKey('Photo', on_delete=md.CASCADE,
-                          related_name='covered_albums', null=True,
-                          default=None)
+    owner = md.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=md.CASCADE,
+        related_name='albums',
+    )
+    cover = md.ForeignKey(
+        'Photo', on_delete=md.CASCADE,
+        related_name='covered_albums',
+        null=True,
+        blank=True,
+        default=None,
+    )
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
     date_published = md.DateTimeField(null=True)
-    published = md.CharField(max_length=255,
-                             choices=PUB_FIELD_CHOICES,
-                             default=PUB_DEFAULT)
+    published = md.CharField(
+        max_length=255,
+        choices=ALBUM_PUB_CHOICES,
+        default=PUB_DEFAULT
+    )
 
     def __str__(self):
         """String output of Album instance."""
@@ -103,8 +119,19 @@ class Album(md.Model):
         for photo in self._owned_photos(photos):
             photo.albums.add(self)
             photo.save()
-            if self.cover is None:
-                self.set_cover(photo)
+            # if self.cover is None:
+            #     self.set_cover(photo)
+
+    def get_url(self):
+        """Return string of url to get to single album view."""
+        return '/images/album/{}/'.format(self.pk)
+
+    def get_cover(self):
+        """Return the user set cover of album or a default image."""
+        if self.cover:
+            return self.cover.img_file
+        item = Photo.objects.get(img_file='DEFAULT_IMAGE')
+        return item.img_file
 
 
 def _pub_date(obj):

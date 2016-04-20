@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sorl.thumbnail',
     'imager_images',
     'imager_profile',
 ]
@@ -77,14 +78,14 @@ WSGI_APPLICATION = 'imagersite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-
+user = os.environ.get('DATABASE_USER', '')
 password = os.environ.get('DATABASE_PASSWORD', '')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django-imager',
-        'USER': 'will',
+        'USER': user,
         'HOST': 'localhost',
         'PORT': '5432',
         'PASSWORD': password
@@ -92,22 +93,24 @@ DATABASES = {
 }
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'image_cache_table',
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'UserAttributeSimilarityValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'MinimumLengthValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'CommonPasswordValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'NumericPasswordValidator')},
 ]
 
 
@@ -130,6 +133,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
@@ -137,4 +143,4 @@ MEDIA_URL = '/media/'
 
 ACCOUNT_ACTIVATION_DAYS = 7
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# LOGIN_REDIRECT_URL = '/profile'
+LOGIN_REDIRECT_URL = '/profile'

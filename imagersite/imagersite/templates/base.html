@@ -6,28 +6,62 @@
         {% block title %}
         {% endblock %}
     </title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href={% static "bootstrap.css" %}>
+    <link rel="stylesheet" type="text/css" href={% static "base.css" %}>
+
 </head>
 <body>
+<div class="container">
 
-<nav>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
 
-<a href="/">Home</a> |
+      <a class="navbar-brand" href="/profile">{{user.username}}</a>
+    </div>
 
-{% if user.is_authenticated %}
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+      </ul>
+      {% if user.is_authenticated %}
+      <ul class="nav navbar-nav">
+          <li><a href="/images/library/">Library</a></li>
+      </ul>
+       <ul class="nav navbar-nav">
+          <li><a href="/profile/">Profile</a></li>
+      </ul>
+       <ul class="nav navbar-nav">
+          <li><a href="/images/photo/add/">New Photo</a></li>
+      </ul>
+       <ul class="nav navbar-nav">
+          <li><a href="/images/album/add/">New Album</a></li>
+      </ul>
+       <ul class="nav navbar-nav navbar-right">
+        <li><a href="/accounts/logout/">Log out</a></li>
+      </ul>
 
-    <span>Logged in as {{user.username}}</span>|
-    <span><a href="/accounts/logout/">Log out</a></span>|
-    <span><a href="/profile/{{user.pk}}/">Profile</a></span>|
-    <span><a href="/library/{{user.pk}}/">Library</a></span>
-
-{% else %}
-
-<a href="/accounts/login">Log in</a> | <a href="/accounts/register">Register</a>
-
-{% endif %}
+       <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Hello, {{user.username}}!</a></li>
+      </ul>
+      {% else %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/accounts/login">Log in</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/accounts/register">Register</a></li>
+      </ul>
+       {% endif  %}
+    </div>
+  </div>
 </nav>
+
+
+
 {% block content %}
 
 {% endblock %}
+</div>
 </body>
 </html>

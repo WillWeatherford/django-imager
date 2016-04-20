@@ -16,6 +16,7 @@ py==1.4.31
 python-dateutil==2.5.2
 simplegeneric==0.8.1
 six==1.10.0
+sorl-thumbnail==12.3
 tox==2.3.1
 traitlets==4.2.1
 virtualenv==15.0.1

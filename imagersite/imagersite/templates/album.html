@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+
+<section class="albums">
+  <h3>{{object.title}}</h3>
+    <p>Sharing level: {{object.published}} | Date made public: {{object.date_published}}</p>
+    <p>Created: {{object.date_created}} | Edited: {{object.date_modified}}</p>
+
+    <div class="container">
+      <div class="row">
+        {% for photo in album.photos.all %}
+          <div class="col-sm-3">
+            <article class="photo-info">
+              <p class="photo-title">{{photo.title}}</p>
+              {% thumbnail photo.img_file "200" as file %}
+                <a href="{{photo.get_url}}">
+                  <img src="{{file.url}}">
+                </a>
+              {% empty %}
+                <p>No Photo Found</p>
+              {% endthumbnail %}
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+</section>
+
+{% endblock %}

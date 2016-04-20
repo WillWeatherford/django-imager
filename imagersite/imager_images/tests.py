@@ -154,10 +154,6 @@ class ManyPhotosOneAlbumCase(TestCase):
             self.assertIn(self.album, photo.albums.all())
             self.assertIn(photo, self.album.photos.all())
 
-    def test_cover_photo_auto_set(self):
-        """Test that a cover photo is set when photos have been added."""
-        self.assertIsNotNone(self.album.cover)
-
     def test_cover_photo_manual_set(self):
         """Test that a cover photo can be manually set."""
         old_cover = self.album.cover
