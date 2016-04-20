@@ -26,7 +26,8 @@ from .views import (
     CreatePhotoView,
     CreateAlbumView,
     EditAlbumView,
-    EditPhotoView
+    EditPhotoView,
+    edit_profile
 )
 
 
@@ -73,8 +74,7 @@ urlpatterns = [
                 raise_exception=True,
             )(CreateAlbumView.as_view())
         )),
-    # url(r'^profile/edit/$',
-    #     UpdateView.as_view()),
+    url(r'^profile/edit/$', edit_profile),
 ]
 
 # (?P<pk>[0-9]+)/$

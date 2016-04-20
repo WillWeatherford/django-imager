@@ -1,10 +1,9 @@
 """ModelForms to add and edit database objects."""
 from django import forms
+from django.forms import inlineformset_factory
 from imager_images.models import Photo, Album
-
-# ownership filtering
-# init method of form
-# view's form instance... figuring out which form to use
+from imager_profile.models import ImagerProfile
+from django.contrib.auth.models import User
 
 
 class AlbumForm(forms.ModelForm):
@@ -21,3 +20,19 @@ class AlbumForm(forms.ModelForm):
         required=False,
         queryset=Photo.objects.all()
     )
+
+
+class UserForm(forms.ModelForm):
+    """Modifying limited fields on the User model."""
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class ImagerProfileForm(forms.ModelForm):
+    """Editable Profile for the user."""
+
+    class Meta:
+        model = ImagerProfile
+        exclude = ['user', 'friends']
