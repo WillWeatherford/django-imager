@@ -51,15 +51,9 @@ class CreateAlbumView(CreateView):
     """Create a new Album to the database."""
 
     model = Album
-    # form_class = AlbumForm
+    form_class = AlbumForm
     template_name = 'create_obj.html'
     success_url = '/images/library/'
-    fields = [
-        'cover',
-        'title',
-        'description',
-        'published',
-    ]
 
     def form_valid(self, form):
         """Insert the user from request context into the form as the owner."""
@@ -69,8 +63,7 @@ class CreateAlbumView(CreateView):
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super(CreateAlbumView, self).get_form(form_class=form_class)
-        # import pdb; pdb.set_trace()
-        # form.fields['photos'].queryset = self.request.user.photos
+        form.fields['photos'].queryset = self.request.user.photos
         return form
 
 
@@ -78,15 +71,9 @@ class EditAlbumView(UpdateView):
     """Allows user to edit their own photos."""
 
     model = Album
-    # form_class = AlbumForm
+    form_class = AlbumForm
     template_name = "edit_obj.html"
     success_url = '/images/library/'
-    fields = [
-        'cover',
-        'title',
-        'description',
-        'published',
-    ]
 
     def get(self, request, *args, **kwargs):
         """Allow only albums belonging to current user as the view queryset."""
@@ -96,8 +83,7 @@ class EditAlbumView(UpdateView):
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super(EditAlbumView, self).get_form(form_class=form_class)
-        # import pdb; pdb.set_trace()
-        # form.fields['photos'].queryset = self.request.user.photos
+        form.fields['photos'].queryset = self.request.user.photos
         return form
 
 
