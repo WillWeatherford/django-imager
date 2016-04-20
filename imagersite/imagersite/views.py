@@ -61,6 +61,34 @@ class CreateAlbumView(CreateView):
         return super(CreateAlbumView, self).form_valid(form)
 
 
+class EditAlbumView(UpdateView):
+    """Allows user to edit their own photos."""
+
+    model = Album
+    form_class = AlbumForm
+    template_name = "edit_obj.html"
+    success_url = '/images/library/'
+
+    def get(self, request, *args, **kwargs):
+        """Allow only albums belonging to current user as the view queryset."""
+        self.queryset = request.user.albums
+        return super(EditAlbumView, self).get(request, *args, **kwargs)
+
+
+class EditPhotoView(UpdateView):
+    """Allows user to edit their own photos."""
+
+    model = Photo
+    template_name = "edit_obj.html"
+    success_url = '/images/library/'
+    fields = ['albums', 'title', 'description', 'published']
+
+    def get(self, request, *args, **kwargs):
+        """Allow only photos belonging to current user as the view queryset."""
+        self.queryset = request.user.photos
+        return super(EditPhotoView, self).get(request, *args, **kwargs)
+
+
 # class EditProfileView(UpdateView):
 #     """Allow the user to edit their profile."""
 

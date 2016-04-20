@@ -21,8 +21,14 @@ from django.contrib import admin
 from django.views.generic import TemplateView, DetailView, UpdateView
 from imager_images.models import Photo, Album
 from imager_profile.models import ImagerProfile
-from .views import HomeView, CreatePhotoView, CreateAlbumView
-from .forms import AlbumForm
+from .views import (
+    HomeView,
+    CreatePhotoView,
+    CreateAlbumView,
+    EditAlbumView,
+    EditPhotoView
+)
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -44,29 +50,15 @@ urlpatterns = [
             permission_required(
                 'imager_images.change_album',
                 raise_exception=True,
-            )(UpdateView.as_view(
-                model=Album,
-                form_class=AlbumForm,
-                template_name="edit_obj.html",
-                # fields=['title', 'description', 'published', 'cover'],
-                success_url='/images/library/',
-            )))),
+            )(EditAlbumView.as_view())
+        )),
 
     url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
         login_required(
             permission_required(
                 'imager_images.change_photo',
                 raise_exception=True,
-            )(UpdateView.as_view(
-                model=Photo,
-                template_name="edit_obj.html",
-                fields=['albums', 'title', 'description', 'published'],
-                success_url='/images/library/',
-            )))),
-    # url(r'^profile/edit/$',
-    #     UpdateView.as_view(
-    #         ,
-    #     )),
+            )(EditPhotoView.as_view()))),
     url(r'^images/photo/add/$',
         login_required(
             permission_required(
@@ -80,7 +72,11 @@ urlpatterns = [
                 'imager_images.change_photo',
                 raise_exception=True,
             )(CreateAlbumView.as_view())
-        ))
+        )),
+    # url(r'^profile/edit/$',
+    #     UpdateView.as_view(
+    #         ,
+    #     )),
 ]
 
 # (?P<pk>[0-9]+)/$
