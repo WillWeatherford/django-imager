@@ -18,5 +18,6 @@ class AlbumForm(forms.ModelForm):
 
     photos = forms.ModelMultipleChoiceField(
         label='Photos',
+        required=False,
         queryset=Photo.objects.all()
     )

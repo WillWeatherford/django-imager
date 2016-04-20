@@ -10,7 +10,6 @@ from django.contrib.auth.models import Group
 import logging
 
 MODELS = ['imagerprofile', 'photo', 'album']
-# PERMS = ['add', 'change', 'delete']
 logger = logging.getLogger(__name__)
 
 

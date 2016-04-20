@@ -5,7 +5,8 @@ from django.utils.encoding import python_2_unicode_compatible
 
 PUB_CHOICES = ['private', 'shared', 'public']
 PUB_DEFAULT = PUB_CHOICES[0]
-PUB_FIELD_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
+PHOTO_PUB_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
+ALBUM_PUB_CHOICES = zip(PUB_CHOICES, PUB_CHOICES)
 DATE_FORMAT = '%d %B %Y %I:%M%p'
 
 
@@ -27,9 +28,11 @@ class PublicManager(md.Manager):
 class Photo(md.Model):
     """Represents a single image in the database."""
 
-    owner = md.ForeignKey(settings.AUTH_USER_MODEL, on_delete=md.CASCADE,
-                          related_name='photos')
-    albums = md.ManyToManyField('Album', related_name='photos')
+    owner = md.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=md.CASCADE,
+        related_name='photos')
+    albums = md.ManyToManyField('Album', related_name='photos', blank=True)
     img_file = md.ImageField(upload_to='img_files')
     title = md.CharField(max_length=255)
     description = md.TextField()
@@ -37,7 +40,7 @@ class Photo(md.Model):
     date_modified = md.DateTimeField(auto_now=True)
     date_published = md.DateTimeField(null=True)
     published = md.CharField(max_length=255,
-                             choices=PUB_FIELD_CHOICES,
+                             choices=PHOTO_PUB_CHOICES,
                              default=PUB_DEFAULT)
     objects = md.Manager()
     public = PublicManager()
@@ -61,20 +64,28 @@ class Photo(md.Model):
 class Album(md.Model):
     """Represents a collection of images in the database."""
 
-    owner = md.ForeignKey(settings.AUTH_USER_MODEL, on_delete=md.CASCADE,
-                          related_name='albums')
-    cover = md.ForeignKey('Photo', on_delete=md.CASCADE,
-                          related_name='covered_albums', null=True,
-                          default=None)
-    # albums = md.ManyToManyField('Photo', related_name='albums')
+    owner = md.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=md.CASCADE,
+        related_name='albums',
+    )
+    cover = md.ForeignKey(
+        'Photo', on_delete=md.CASCADE,
+        related_name='covered_albums',
+        null=True,
+        blank=True,
+        default=None,
+    )
     title = md.CharField(max_length=255)
     description = md.TextField()
     date_created = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
     date_published = md.DateTimeField(null=True)
-    published = md.CharField(max_length=255,
-                             choices=PUB_FIELD_CHOICES,
-                             default=PUB_DEFAULT)
+    published = md.CharField(
+        max_length=255,
+        choices=ALBUM_PUB_CHOICES,
+        default=PUB_DEFAULT
+    )
 
     def __str__(self):
         """String output of Album instance."""
