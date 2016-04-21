@@ -1,12 +1,22 @@
 """Tests for profile, library, album and photo views."""
 from __future__ import unicode_literals
 from django.test import Client, TestCase, override_settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from imager_profile.tests import UserFactory
 from imager_images.tests import TMP_MEDIA_ROOT, AlbumFactory, PhotoFactory
 from .test_auth import user_from_response
 from imager_images.models import Photo, Album
 import re
+
+MODELS = [
+    '{}_imagerprofile',
+    '{}_album',
+    '{}_photo',
+]
+PERMS = [model.format(perm)
+         for perm in ('add', 'change', 'delete')
+         for model in MODELS]
+PERMS.append('change_user')
 
 DEFAULT_IMG = 'media/django-magic.jpg'
 HOME = '/'
@@ -39,6 +49,7 @@ PHOTOS_PAT = NUM_PAT + r' photos'
 NEW_ALBUM_PARAMS = {
     'title': 'A New Photo',
     'description': 'Best Album Yet',
+    'published': 'private',
 }
 
 
@@ -52,6 +63,10 @@ class AuthenticatedCase(TestCase):
 
         for user in UserFactory.create_batch(NUM_USERS):
             params = {'username': user.username, 'password': 'secret'}
+
+            for perm in PERMS:
+                perm = Permission.objects.get(codename=perm)
+                user.user_permissions.add(perm)
 
             session = {'user': user}
             session['client'] = client = Client()
@@ -216,7 +231,8 @@ class AuthenticatedCase(TestCase):
             user = session['user']
             client = session['client']
             self.assertEqual(user.albums.count(), NUM_ALBUMS)
-            response = client.post(ADD_ALBUM, params=NEW_ALBUM_PARAMS)
+            response = client.post(ADD_ALBUM, NEW_ALBUM_PARAMS)
+            # import pdb;pdb.set_trace()
             self.assertEqual(response.status_code, 302)
             self.assertEqual(user.albums.count(), NUM_ALBUMS + 1)
             # check that path is to library
