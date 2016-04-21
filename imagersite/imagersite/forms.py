@@ -21,11 +21,20 @@ class AlbumForm(forms.ModelForm):
         queryset=Photo.objects.all()
     )
 
+    def save(self, commit=True):
+        """Extend ModelForm save method ensuring we add photos to album."""
+        photos = self.cleaned_data['photos']
+        instance = super(AlbumForm, self).save(commit)
+        instance.photos.add(*photos)
+        return instance
+
 
 class UserForm(forms.ModelForm):
     """Modifying limited fields on the User model."""
 
     class Meta:
+        """Establish Model and fields for user form."""
+
         model = User
         fields = ['first_name', 'last_name', 'email']
 
@@ -34,6 +43,8 @@ class ImagerProfileForm(forms.ModelForm):
     """Editable Profile for the user."""
 
     class Meta:
+        """Establish Model and fields for user form."""
+
         model = ImagerProfile
         exclude = ['user', 'friends']
 
