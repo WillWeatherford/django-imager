@@ -19,7 +19,7 @@
             <article class="photo-info">
               <p class="photo-title">{{photo.title}}</p>
               {% thumbnail photo.img_file "200" as file %}
-                <a href="{{photo.get_url}}">
+                <a href="{% url 'photo_detail' pk=photo.pk %}">
                   <img src="{{file.url}}">
                 </a>
               {% empty %}
@@ -27,7 +27,7 @@
               {% endthumbnail %}
             {% if photo.owner == user %}
               <p>
-                <a href="/images/photo/{{photo.pk}}/edit/">Edit</a>
+                <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
               </p>
             {% endif %}
             </article>

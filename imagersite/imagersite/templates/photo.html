@@ -15,7 +15,7 @@
     {% if object.albums.count %}
       <p>Albums this photo is in:</p>
       {% for album in object.albums.all %}
-        <a href="{{album.get_url}}">
+        <a href="{% url 'album_detail' pk=photo.pk %}">
           <p>{{album.title}}</p>
         </a>
       {% endfor %}
