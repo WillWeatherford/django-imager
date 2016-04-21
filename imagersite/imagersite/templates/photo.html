@@ -24,6 +24,11 @@
     {% endif %}
     <img src="{{object.img_file.url}}">
     <h5>Description: {{object.description}}</h5>
+    {% if photo.owner == user %}
+      <p>
+        <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+      </p>
+    {% endif %}
   </article>
 </section>
 

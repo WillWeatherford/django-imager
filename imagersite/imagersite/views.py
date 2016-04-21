@@ -17,12 +17,13 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         """Return dictionary of context information for home view."""
+        context_data = super(HomeView, self).get_context_data(*args, **kwargs)
         img_url = DEFAULT_IMG_URL
         user_photo = Photo.public.random()
         if user_photo:
             img_url = user_photo.img_file.url
-
-        return {'img_url': img_url}
+        context_data['img_url'] = img_url
+        return context_data
 
 
 #####################
@@ -40,6 +41,18 @@ class CreateOrEditMixin(object):
         """Allow only photos belonging to current user as the view queryset."""
         self.queryset = getattr(self.request.user, self.own_queryset_name)
         return super(CreateOrEditMixin, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        """Provide context data to edit and create pages."""
+        # import pdb;pdb.set_trace()
+        context_data = super(
+            CreateOrEditMixin, self).get_context_data(*args, **kwargs)
+        path = self.request.path
+        if '/add/' in path:
+            context_data['cancel_url'] = self.success_url
+        else:
+            context_data['cancel_url'] = path.replace('edit/', '')
+        return context_data
 
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
