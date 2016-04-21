@@ -50,8 +50,11 @@ class CreateOrEditMixin(object):
         path = self.request.path
         if '/add/' in path:
             context_data['cancel_url'] = self.success_url
+            context_data['use_case'] = 'Create'
         else:
             context_data['cancel_url'] = path.replace('edit/', '')
+            context_data['use_case'] = 'Edit'
+        context_data['model_name'] = self.object.__class__.__name__
         return context_data
 
     def get_form(self, form_class=None):
