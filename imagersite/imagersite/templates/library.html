@@ -23,9 +23,11 @@
               </a>
               {% empty %}
             {% endthumbnail %}
-            <p>
-              <a href="/images/album/{{album.pk}}/edit/">Edit</a>
-            </p>
+            {% if album.owner == user %}
+              <p>
+                <a href="/images/album/{{album.pk}}/edit/">Edit</a>
+              </p>
+            {% endif %}
           </article>
           </div>
         {% endfor %}
@@ -47,9 +49,11 @@
                 {% empty %}
                   <p>No Photo Found</p>
               {% endthumbnail %}
-            <p>
-              <a href="/images/photo/{{photo.pk}}/edit/">Edit</a>
-            </p>
+            {% if photo.owner == user %}
+              <p>
+                <a href="/images/photo/{{photo.pk}}/edit/">Edit</a>
+              </p>
+            {% endif %}
             </article>
           </div>
         {% endfor %}

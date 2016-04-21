@@ -25,6 +25,11 @@
               {% empty %}
                 <p>No Photo Found</p>
               {% endthumbnail %}
+            {% if photo.owner == user %}
+              <p>
+                <a href="/images/photo/{{photo.pk}}/edit/">Edit</a>
+              </p>
+            {% endif %}
             </article>
           </div>
         {% endfor %}
