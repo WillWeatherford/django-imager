@@ -18,14 +18,14 @@
           <article class="album-info">
             <p class="album-title">{{album.title}}</p>
             {% thumbnail album.get_cover "200" as img_file %}
-              <a href="{{album.get_url}}">
+              <a href="{% url 'album_detail' pk=album.pk %}">
                   <img src="{{img_file.url}}">
               </a>
               {% empty %}
             {% endthumbnail %}
             {% if album.owner == user %}
               <p>
-                <a href="/images/album/{{album.pk}}/edit/">Edit</a>
+                <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
               </p>
             {% endif %}
           </article>
@@ -43,7 +43,7 @@
             <article class="photo-info">
               <p class="photo-title">{{photo.title}}</p>
               {% thumbnail photo.img_file "200" as file %}
-                <a href="{{photo.get_url}}">
+                <a href="{% url 'photo_detail' pk=photo.pk %}">
                   <img src="{{file.url}}">
                 </a>
                 {% empty %}
@@ -51,7 +51,7 @@
               {% endthumbnail %}
             {% if photo.owner == user %}
               <p>
-                <a href="/images/photo/{{photo.pk}}/edit/">Edit</a>
+                <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
               </p>
             {% endif %}
             </article>
