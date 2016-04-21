@@ -10,6 +10,9 @@ import re
 
 DEFAULT_IMG = 'media/django-magic.jpg'
 HOME = '/'
+EDIT = 'edit/'
+ADD = 'add/'
+PK = '{}/'
 REG = '/accounts/register/'
 LOGIN = '/accounts/login/'
 LOGOUT = '/accounts/logout/'
@@ -17,6 +20,12 @@ PROFILE = '/profile/'
 LIBRARY = '/images/library/'
 ALBUM = '/images/album/'
 PHOTO = '/images/photo/'
+ALBUM_DETAIL = ALBUM + PK
+PHOTO_DETAIL = PHOTO + PK
+EDIT_ALBUM = ALBUM_DETAIL + EDIT
+EDIT_PHOTO = PHOTO_DETAIL + EDIT
+ADD_ALBUM = ALBUM + ADD
+ADD_PHOTO = PHOTO + ADD
 
 NUM_USERS = 4
 NUM_ALBUMS = 4
@@ -26,6 +35,11 @@ NUM_PAT = r'(?P<num>[0-9])'
 FRIENDS_PAT = NUM_PAT + r' friends'
 ALBUMS_PAT = NUM_PAT + r' albums'
 PHOTOS_PAT = NUM_PAT + r' photos'
+
+NEW_ALBUM_PARAMS = {
+    'title': 'A New Photo',
+    'description': 'Best Album Yet',
+}
 
 
 @override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
@@ -184,7 +198,7 @@ class AuthenticatedCase(TestCase):
             user = session['user']
             client = session['client']
             for album in user.albums.all():
-                response = client.get(album.get_url())
+                response = client.get(ALBUM_DETAIL.format(album.pk))
                 self.assertEqual(response.status_code, 200)
 
     def test_photo_page(self):
@@ -193,5 +207,40 @@ class AuthenticatedCase(TestCase):
             user = session['user']
             client = session['client']
             for photo in user.photos.all():
-                response = client.get(photo.get_url())
+                response = client.get(PHOTO_DETAIL.format(photo.pk))
                 self.assertEqual(response.status_code, 200)
+
+    def test_add_album(self):
+        """Test that user can add an album to their albums."""
+        for session in self.users_sessions:
+            user = session['user']
+            client = session['client']
+            self.assertEqual(user.albums.count(), NUM_ALBUMS)
+            response = client.post(ADD_ALBUM, params=NEW_ALBUM_PARAMS)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(user.albums.count(), NUM_ALBUMS + 1)
+            # check that path is to library
+            # check that new title is in library
+
+    def test_add_photo(self):
+        """Test that uset can add an album to their albums."""
+
+    def test_only_edit_own_albums(self):
+        """Test that user can only edit their own albums."""
+        for session in self.users_sessions:
+            client = session['client']
+            other_users = (ses['user'] for ses in self.users_sessions
+                           if ses != session)
+            for other in other_users:
+                for album in other.albums.all():
+                    response = client.get(EDIT_ALBUM.format(album.pk))
+                    self.assertEqual(response.status_code, 404)
+
+
+# No user may edit resources that do not belong to him or her
+# login redirect if not logged in
+# 404 if trying to edit not owned album/photo/profile
+# test that save redirects to library
+# test 2 models * 2 methods - create/edit
+# test user profile edit on both profile and user models
+# test that MtM relationships work with edit/add
