@@ -36,53 +36,59 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home_page'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
-    url(r'^profile/$', login_required(
-        TemplateView.as_view(template_name="profile.html"))),
+    url(r'^profile/$',
+        login_required(TemplateView.as_view(template_name="profile.html")),
+        name='profile',),
 
     url(r'^profile/edit/$',
         login_required(
             permission_required(
                 'auth.change_user',
-                raise_exception=True)(edit_profile)
-        )),
+                raise_exception=True)(edit_profile)),
+        name='edit_profile'),
 
-    url(r'^images/library/$', login_required(
-        TemplateView.as_view(template_name="library.html"))),
+    url(r'^images/library/$',
+        login_required(TemplateView.as_view(template_name="library.html")),
+        name='library'),
 
     url(r'^images/album/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Album, template_name="album.html")),
+        DetailView.as_view(model=Album, template_name="album.html"),
+        name='album_detail'),
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Photo, template_name="photo.html")),
+        DetailView.as_view(model=Photo, template_name="photo.html"),
+        name='photo_detail'),
 
     url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
         login_required(
             permission_required(
                 'imager_images.change_album',
                 raise_exception=True,
-            )(EditAlbumView.as_view())
-        )),
+            )(EditAlbumView.as_view())),
+        name='edit_album'),
 
     url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
         login_required(
             permission_required(
                 'imager_images.change_photo',
                 raise_exception=True,
-            )(EditPhotoView.as_view()))),
+            )(EditPhotoView.as_view())),
+        name='edit_photo'),
 
     url(r'^images/photo/add/$',
         login_required(
             permission_required(
                 'imager_images.add_photo',
                 raise_exception=True,
-            )(CreatePhotoView.as_view())
-        )),
+            )(CreatePhotoView.as_view())),
+        name='add_photo'),
+
     url(r'^images/album/add/$',
         login_required(
             permission_required(
                 'imager_images.add_album',
                 raise_exception=True,
-            )(CreateAlbumView.as_view())
-        )),
+            )(CreateAlbumView.as_view())),
+        name='add_album'),
 
     # url(r'^profile/edit/$', EditProfileView.as_view()),
 ]
