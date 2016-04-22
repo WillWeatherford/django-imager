@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import dj_database_url
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -82,14 +83,14 @@ user = os.environ.get('DATABASE_USER', '')
 password = os.environ.get('DATABASE_PASSWORD', '')
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django-imager',
-        'USER': user,
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'PASSWORD': password
-    }
+    'default':
+        dj_database_url.config()
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'django-imager',
+        # 'USER': user,
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
+        # 'PASSWORD': password
 }
 
 
