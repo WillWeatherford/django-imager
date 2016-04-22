@@ -27,8 +27,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
+TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['ec2-52-39-88-2.us-west-2.compute.amazonaws.com']
+ALLOWED_HOSTS = ['ec2-52-39-88-2.us-west-2.compute.amazonaws.com', 'localhost']
 
 
 # Application definition
