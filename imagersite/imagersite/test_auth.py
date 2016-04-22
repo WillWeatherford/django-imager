@@ -12,6 +12,8 @@ HOME = '/'
 REG = '/accounts/register/'
 LOGIN = '/accounts/login/'
 LOGOUT = '/accounts/logout/'
+PROFILE = '/profile/'
+LIBRARY = '/images/library/'
 
 BAD_LOGIN_PARAMS = {'username': 'NotRealUser', 'password': 'notsecret'}
 BAD_REG_PARAMS = {'username': 'NotRealUser',
@@ -27,6 +29,15 @@ GOOD_REG_PARAMS = {'username': 'CoolPerson',
 LINK_PATTERN = r'/accounts/activate/.*/'
 
 
+def user_from_response(response):
+    """Helper function to dig the user from the HTTPresponse."""
+    for dic in response.context[0]:
+        user = dic.get('user')
+        if user:
+            break
+    return user
+
+
 class UnauthenticatedCase(TestCase):
     """Testing when user is not logged in."""
 
@@ -39,7 +50,8 @@ class UnauthenticatedCase(TestCase):
         self.login_get_response = client.get(LOGIN)
         self.login_post_bad = client.post(LOGIN, BAD_LOGIN_PARAMS)
         self.logout_response = client.get(LOGOUT)
-        self.home_context = self.home_response.context[0]
+        self.profile_response = client.get(PROFILE)
+        self.library_response = client.get(LIBRARY)
 
     def test_no_users_in_db(self):
         """Make sure test session starts with empty database."""
@@ -63,11 +75,8 @@ class UnauthenticatedCase(TestCase):
 
     def test_no_authenticated_user(self):
         """Test that there is no authenticated user."""
-        for dic in self.home_context:
-            user = dic.get('user')
-            if user:
-                break
-        self.assertIsInstance(user, AnonymousUser)
+        user = user_from_response(self.home_response)
+        self.assertFalse(user.is_authenticated())
 
     def test_no_username_display(self):
         """Test that message displaying username does not appear."""
@@ -110,6 +119,16 @@ class UnauthenticatedCase(TestCase):
         """Test bad registration gives message when passwords don't match."""
         expected_msg = b'The two password fields didn&#39;t match.'
         self.assertIn(expected_msg, self.reg_post_bad.content)
+
+    def test_profile_login_required(self):
+        """Test that getting /accounts/profile/ redirects to login."""
+        self.assertEqual(self.profile_response.status_code, 302)
+        self.assertTrue(self.profile_response.url.startswith(LOGIN))
+
+    def test_library_login_required(self):
+        """Test that getting /images/library/ redirects to login."""
+        self.assertEqual(self.profile_response.status_code, 302)
+        self.assertTrue(self.profile_response.url.startswith(LOGIN))
 
 
 class RegistrationCase(TestCase):
@@ -229,10 +248,7 @@ class AuthenticatedCase(TestCase):
 
     def test_login_bad_password_unauthenticated(self):
         """Test that bad password login attempt returns login page OK."""
-        for dic in self.login_post_bad.context[0]:
-            user = dic.get('user')
-            if user:
-                break
+        user = user_from_response(self.login_post_bad)
         self.assertIsInstance(user, AnonymousUser)
 
     def test_login_post_good_ok(self):
@@ -241,10 +257,7 @@ class AuthenticatedCase(TestCase):
 
     def test_login_post_good_authenticated_user(self):
         """Test that there is an authenticated user in response."""
-        for dic in self.login_post_good.context[0]:
-            user = dic.get('user')
-            if user:
-                break
+        user = user_from_response(self.login_post_good)
         self.assertIsInstance(user, User)
 
     def test_logged_in_logout_link(self):

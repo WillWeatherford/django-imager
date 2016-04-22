@@ -19,9 +19,9 @@ class ImagerProfile(md.Model):
 
     user = md.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
     friends = md.ManyToManyField('self', related_name='friends')
-    location = md.CharField(default='', max_length=255)
-    camera = md.CharField(default='', max_length=255)
-    fav_photo = md.CharField(default='', max_length=255)
+    location = md.CharField(null=True, blank=True, max_length=255)
+    camera = md.CharField(null=True, blank=True, max_length=255)
+    fav_photo = md.CharField(null=True, blank=True, max_length=255)
 
     objects = md.Manager()
     active = ActiveManager()

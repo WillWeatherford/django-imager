@@ -1,0 +1,14 @@
+.photo-info {
+    height: 300px;
+    margin: 0;
+    padding: 0;
+}
+.single-photo-info img{
+    width: 100%;
+    height: 100%;
+    /*overflow: hidden;*/
+}
+.single-photo-info {
+        width: 600px;
+        height: 600px;
+    }

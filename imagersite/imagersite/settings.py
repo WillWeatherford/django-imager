@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import dj_database_url
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -21,12 +22,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(vk)!5j=k18q1eo$2^c=18x0h)b14ijz1q3$^f9#i(awy4g(o('
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
+TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ec2-52-39-88-2.us-west-2.compute.amazonaws.com', 'localhost']
 
 
 # Application definition
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sorl.thumbnail',
     'imager_images',
     'imager_profile',
 ]
@@ -77,37 +81,39 @@ WSGI_APPLICATION = 'imagersite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-
+user = os.environ.get('DATABASE_USER', '')
 password = os.environ.get('DATABASE_PASSWORD', '')
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django-imager',
-        'USER': 'will',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'PASSWORD': password
-    }
+    'default':
+        dj_database_url.config()
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'django-imager',
+        # 'USER': user,
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
+        # 'PASSWORD': password
 }
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'image_cache_table',
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'UserAttributeSimilarityValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'MinimumLengthValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'CommonPasswordValidator')},
+    {'NAME': ('django.contrib.auth.password_validation.'
+              'NumericPasswordValidator')},
 ]
 
 
@@ -128,7 +134,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -137,4 +146,4 @@ MEDIA_URL = '/media/'
 
 ACCOUNT_ACTIVATION_DAYS = 7
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# LOGIN_REDIRECT_URL = '/profile'
+LOGIN_REDIRECT_URL = '/profile'
