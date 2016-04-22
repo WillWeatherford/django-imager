@@ -27,7 +27,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
-TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['ec2-52-39-88-2.us-west-2.compute.amazonaws.com', 'localhost']
 
@@ -61,6 +60,7 @@ ROOT_URLCONF = 'imagersite.urls'
 
 TEMPLATES = [
     {
+        'TEMPLATE_DEBUG': DEBUG,
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'imagersite', 'templates')],
         'APP_DIRS': True,
@@ -87,12 +87,14 @@ password = os.environ.get('DATABASE_PASSWORD', '')
 DATABASES = {
     'default':
         dj_database_url.config()
+        # {
         # 'ENGINE': 'django.db.backends.postgresql',
         # 'NAME': 'django-imager',
         # 'USER': user,
         # 'HOST': 'localhost',
         # 'PORT': '5432',
         # 'PASSWORD': password
+        # }
 }
 
 
