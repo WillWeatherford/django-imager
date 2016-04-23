@@ -80,22 +80,9 @@ WSGI_APPLICATION = 'imagersite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-user = os.environ.get('DATABASE_USER', '')
-password = os.environ.get('DATABASE_PASSWORD', '')
-
 DATABASES = {
-    'default':
-        dj_database_url.config()
-        # {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'django-imager',
-        # 'USER': user,
-        # 'HOST': 'localhost',
-        # 'PORT': '5432',
-        # 'PASSWORD': password
-        # }
+    'default': dj_database_url.config()
 }
-
 
 CACHES = {
     'default': {
