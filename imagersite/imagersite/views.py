@@ -26,9 +26,6 @@ class HomeView(TemplateView):
         return context_data
 
 
-#####################
-# Under construction consolidated class
-
 class CreateOrEditMixin(object):
     """Flexible class view for creation and editing of albums and photos."""
 
@@ -44,7 +41,6 @@ class CreateOrEditMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         """Provide context data to edit and create pages."""
-        # import pdb;pdb.set_trace()
         context_data = super(
             CreateOrEditMixin, self).get_context_data(*args, **kwargs)
         path = self.request.path
@@ -54,7 +50,7 @@ class CreateOrEditMixin(object):
         else:
             context_data['cancel_url'] = path.replace('edit/', '')
             context_data['use_case'] = 'Edit'
-        context_data['model_name'] = self.object.__class__.__name__
+        context_data['model_name'] = self.model.__class__.__name__
         return context_data
 
     def get_form(self, form_class=None):
