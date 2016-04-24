@@ -92,12 +92,7 @@ urlpatterns = [
     # url(r'^profile/edit/$', EditProfileView.as_view()),
 ]
 
-# import pdb;pdb.set_trace()
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL,
-                          document_root=settings.STATIC_ROOT)
-# import pdb;pdb.set_trace()
