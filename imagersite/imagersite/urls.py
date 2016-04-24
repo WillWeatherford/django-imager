@@ -18,16 +18,15 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView, DetailView, UpdateView
+from django.views.generic import TemplateView, DetailView
 from imager_images.models import Photo, Album
-from imager_profile.models import ImagerProfile
 from .views import (
     HomeView,
     CreatePhotoView,
     CreateAlbumView,
     EditAlbumView,
     EditPhotoView,
-    EditProfileView,
+    # EditProfileView,
     edit_profile,
 )
 
@@ -93,11 +92,12 @@ urlpatterns = [
     # url(r'^profile/edit/$', EditProfileView.as_view()),
 ]
 
+# import pdb;pdb.set_trace()
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
-
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,
                           document_root=settings.STATIC_ROOT)
+# import pdb;pdb.set_trace()

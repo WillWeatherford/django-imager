@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, CreateView, UpdateView
 from imager_images.models import Photo, Album
 from imager_profile.models import ImagerProfile

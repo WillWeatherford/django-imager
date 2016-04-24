@@ -1,7 +1,7 @@
 decorator==4.0.9
 dj-database-url==0.4.1
 Django==1.9.5
--e git+https://github.com/WillWeatherford/django-imager.git@4dd187bc13af8108b5072c0918c22c887686c98c#egg=Django_Imager
+-e git+https://github.com/WillWeatherford/django-imager.git@d40cad13c448abae0d7a687b604607d321b45b71#egg=Django_Imager
 django-registration==2.0.4
 factory-boy==2.6.1
 fake-factory==0.5.7
