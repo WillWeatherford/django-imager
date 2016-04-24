@@ -30,6 +30,20 @@ from .views import (
     edit_profile,
 )
 
+ADD, EDIT, DELETE = 'add', 'change', 'delete'
+USER = 'auth.{}_user'
+PROFILE = 'imager_profile.{}_imagerprofile'
+ALBUM = 'imager_images.{}_album'
+PHOTO = 'imager_images.{}_photo'
+
+
+def log_perm_required(model, perm, view):
+    """Shortcut to wrap a view in both login_ and permission_required."""
+    perm_name = model.format(perm)
+    return login_required(
+        permission_required(
+            perm_name, raise_exception=True)(view))
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -40,10 +54,7 @@ urlpatterns = [
         name='profile',),
 
     url(r'^profile/edit/$',
-        login_required(
-            permission_required(
-                'auth.change_user',
-                raise_exception=True)(edit_profile)),
+        log_perm_required(USER, EDIT, edit_profile),
         name='edit_profile'),
 
     url(r'^images/library/$',
@@ -58,59 +69,41 @@ urlpatterns = [
         name='photo_detail'),
 
     url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
-        login_required(
-            permission_required(
-                'imager_images.change_album',
-                raise_exception=True,
-            )(EditAlbumView.as_view())),
+        log_perm_required(ALBUM, EDIT, EditAlbumView.as_view()),
         name='edit_album'),
 
     url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
-        login_required(
-            permission_required(
-                'imager_images.change_photo',
-                raise_exception=True,
-            )(EditPhotoView.as_view())),
+        log_perm_required(PHOTO, EDIT, EditPhotoView.as_view()),
         name='edit_photo'),
 
     url(r'^images/photo/add/$',
-        login_required(
-            permission_required(
-                'imager_images.add_photo',
-                raise_exception=True,
-            )(CreatePhotoView.as_view())),
+        log_perm_required(PHOTO, ADD, CreatePhotoView.as_view()),
         name='add_photo'),
 
     url(r'^images/album/add/$',
-        login_required(
-            permission_required(
-                'imager_images.add_album',
-                raise_exception=True,
-            )(CreateAlbumView.as_view())),
+        log_perm_required(ALBUM, ADD, CreateAlbumView.as_view()),
         name='add_album'),
 
     url(r'^images/album/(?P<pk>[0-9]+)/delete/$',
-        login_required(
-            permission_required(
-                'imager_images.delete_album',
-                raise_exception=True,
-            )(DeleteView.as_view(
+        log_perm_required(
+            ALBUM,
+            DELETE,
+            DeleteView.as_view(
                 model=Album,
                 template_name='confirm_delete.html',
                 success_url='/images/library/',
-            ))),
+            )),
         name='delete_album'),
 
     url(r'^images/photo/(?P<pk>[0-9]+)/delete/$',
-        login_required(
-            permission_required(
-                'imager_images.delete_photo',
-                raise_exception=True,
-            )(DeleteView.as_view(
+        log_perm_required(
+            PHOTO,
+            DELETE,
+            DeleteView.as_view(
                 model=Photo,
                 template_name='confirm_delete.html',
                 success_url='/images/library/',
-            ))),
+            )),
         name='delete_photo'),
 
     # url(r'^profile/edit/$', EditProfileView.as_view()),
