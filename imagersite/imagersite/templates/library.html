@@ -25,8 +25,13 @@
             {% endthumbnail %}
             </a>
             {% if album.owner == user %}
-              <p>
-                <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
+              <p class='edit-delete-album'>
+                <span class='edit-album'>
+                  <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
+                </span>
+                <span class='delete-album'>
+                  <a href="{% url 'delete_album' pk=album.pk %}">Delete</a>
+                </span>
               </p>
             {% endif %}
           </div>
@@ -47,8 +52,13 @@
                   <p>No Photo Found</p>
               {% endthumbnail %}
             {% if photo.owner == user %}
-              <p>
-                <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+              <p class='edit-delete-photo'>
+                <span class='edit-photo'>
+                  <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+                </span>
+                <span class='delete-photo'>
+                  <a href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
+                </span>
               </p>
             {% endif %}
             </div>
