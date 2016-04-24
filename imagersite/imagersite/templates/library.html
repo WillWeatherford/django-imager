@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load thumbnail %}
+{% load staticfiles %}
 
 {% block title %}
     {{user.username}}'s Library
@@ -17,12 +18,13 @@
           <div class="col-sm-3">
           <article class="album-info">
             <p class="album-title">{{album.title}}</p>
+            <a href="{% url 'album_detail' pk=album.pk %}">
             {% thumbnail album.get_cover "200" as img_file %}
-              <a href="{% url 'album_detail' pk=album.pk %}">
-                  <img src="{{img_file.url}}">
-              </a>
-              {% empty %}
+              <img src="{{img_file.url}}">
+            {% empty %}
+              <img src={% static "default_thumbnail/django-magic-thumb.jpg" %}>
             {% endthumbnail %}
+            </a>
             {% if album.owner == user %}
               <p>
                 <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
