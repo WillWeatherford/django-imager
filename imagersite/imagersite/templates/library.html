@@ -27,7 +27,8 @@
             </a>
             {% if album.owner == user %}
               <p>
-                <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
+                <span><a href="{% url 'edit_album' pk=album.pk %}">Edit</a></span>
+                <span><a href="{% url 'delete_album' pk=album.pk %}">Delete</a></span>
               </p>
             {% endif %}
           </article>
