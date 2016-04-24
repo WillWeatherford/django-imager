@@ -47,8 +47,9 @@ def log_perm_required(model, perm, view):
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', HomeView.as_view(), name='home_page'),
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
+
     url(r'^profile/$',
         login_required(TemplateView.as_view(template_name="profile.html")),
         name='profile',),
@@ -64,6 +65,7 @@ urlpatterns = [
     url(r'^images/album/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Album, template_name="album.html"),
         name='album_detail'),
+
     url(r'^images/photo/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=Photo, template_name="photo.html"),
         name='photo_detail'),
