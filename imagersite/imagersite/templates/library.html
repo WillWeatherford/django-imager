@@ -26,10 +26,10 @@
             </a>
             {% if album.owner == user %}
               <p class='edit-delete-album'>
-                <span class='edit-photo'>
+                <span class='edit-album'>
                   <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
                 </span>
-                <span class='delete-photo'>
+                <span class='delete-album'>
                   <a href="{% url 'delete_album' pk=album.pk %}">Delete</a>
                 </span>
               </p>
