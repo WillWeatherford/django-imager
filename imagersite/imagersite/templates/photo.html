@@ -25,9 +25,14 @@
       <p>This photo is not in any albums.</p>
     {% endif %}
     </div>
-        {% if photo.owner == user %}
-      <p>
-        <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+    {% if photo.owner == user %}
+      <p class='edit-delete-photo'>
+        <span class='edit-photo'>
+          <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+        </span>
+        <span class='delete-photo'>
+          <a href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
+        </span>
       </p>
     {% endif %}
     <div class="photo-containerh photo-containerw">
