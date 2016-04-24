@@ -17,7 +17,7 @@
     <div>
       <p><strong>Albums this photo is in:</strong></p>
       {% for album in object.albums.all %}
-        <a href="{% url 'album_detail' pk=photo.pk %}">
+        <a href="{% url 'album_detail' pk=album.pk %}">
           <p>{{album.title}}</p>
         </a>
       {% endfor %}
