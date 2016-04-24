@@ -18,11 +18,11 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return dictionary of context information for home view."""
         context_data = super(HomeView, self).get_context_data(*args, **kwargs)
-        img_url = DEFAULT_IMG_URL
-        user_photo = Photo.public.random()
-        if user_photo:
-            img_url = user_photo.img_file.url
-        context_data['img_url'] = img_url
+        try:
+            user_photo = Photo.public.random()
+            context_data['img_url'] = user_photo.img_file.url
+        except AttributeError:
+            context_data['img_url'] = DEFAULT_IMG_URL
         return context_data
 
 
@@ -106,6 +106,9 @@ def edit_profile(request):
     """Allow user to edit their ImagerProfile, and limited fields of User."""
     user = request.user
     profile = request.user.profile
+    user_form = UserForm(instance=user)
+    profile_form = ImagerProfileForm(instance=profile)
+
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=user)
         profile_form = ImagerProfileForm(request.POST, instance=profile)
@@ -113,8 +116,6 @@ def edit_profile(request):
             user_form.save()
             profile_form.save()
             return HttpResponseRedirect('/profile/')
-    user_form = UserForm(instance=user)
-    profile_form = ImagerProfileForm(instance=profile)
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'edit_profile.html', context)
 
