@@ -53,7 +53,8 @@
               {% endthumbnail %}
             {% if photo.owner == user %}
               <p>
-                <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+                <span><a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a></span>
+                <span><a href="{% url 'delete_photo' pk=photo.pk %}">Delete</a></span>
               </p>
             {% endif %}
             </article>

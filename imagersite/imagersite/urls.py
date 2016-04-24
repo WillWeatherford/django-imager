@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, DeleteView
 from imager_images.models import Photo, Album
 from .views import (
     HomeView,
@@ -88,6 +88,30 @@ urlpatterns = [
                 raise_exception=True,
             )(CreateAlbumView.as_view())),
         name='add_album'),
+
+    url(r'^images/album/(?P<pk>[0-9]+)/delete/$',
+        login_required(
+            permission_required(
+                'imager_images.delete_album',
+                raise_exception=True,
+            )(DeleteView.as_view(
+                model=Album,
+                template_name='confirm_delete.html',
+                success_url='/images/library/',
+            ))),
+        name='delete_album'),
+
+    url(r'^images/photo/(?P<pk>[0-9]+)/delete/$',
+        login_required(
+            permission_required(
+                'imager_images.delete_photo',
+                raise_exception=True,
+            )(DeleteView.as_view(
+                model=Photo,
+                template_name='confirm_delete.html',
+                success_url='/images/library/',
+            ))),
+        name='delete_photo'),
 
     # url(r'^profile/edit/$', EditProfileView.as_view()),
 ]
