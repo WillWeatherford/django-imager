@@ -11,13 +11,11 @@
   <h3>{{user.username}}'s Library</h3>
 
 
-  <section class="albums">
+    <div class="lib-block">
     <h4>Albums</h4>
-    <div class="container">
-      <div class="row">
+    <section class="albums">
         {% for album in user.albums.all %}
-          <div class="col-sm-3">
-          <article class="album-info">
+          <div class="thumbnail" id="album">
             <p class="album-title">{{album.title}}</p>
             <a href="{% url 'album_detail' pk=album.pk %}">
             {% thumbnail album.get_cover "200" as img_file %}
@@ -31,19 +29,15 @@
                 <a href="{% url 'edit_album' pk=album.pk %}">Edit</a>
               </p>
             {% endif %}
-          </article>
           </div>
         {% endfor %}
-      </div>
-    </div>
   </section>
+  </div>
+  <div class="lib_block">
+  <h4>Photos</h4>
   <section class="photos">
-    <h4>Photos</h4>
-    <div class="container">
-      <div class="row">
         {% for photo in user.photos.all %}
-          <div class="col-sm-3">
-            <article class="photo-info">
+          <div class="thumbnail">
               <p class="photo-title">{{photo.title}}</p>
               {% thumbnail photo.img_file "200" as file %}
                 <a href="{% url 'photo_detail' pk=photo.pk %}">
@@ -57,10 +51,8 @@
                 <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
               </p>
             {% endif %}
-            </article>
-          </div>
+            </div>
         {% endfor %}
-      </div>
-    </div>
   </section>
+  </div>
 {% endblock %}
