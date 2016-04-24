@@ -7,34 +7,27 @@
 
 {% block content %}
 
-<section class="albums">
-  <h3>{{object.title}}</h3>
-    <p>Sharing level: {{object.published}} | Date made public: {{object.date_published}}</p>
-    <p>Created: {{object.date_created}} | Edited: {{object.date_modified}}</p>
-
-    <div class="container">
-      <div class="row">
-        {% for photo in album.photos.all %}
-          <div class="col-sm-3">
-            <article class="photo-info">
+<div class="lib_block">
+  <h4>Photos</h4>
+  <section class="photos">
+        {% for photo in user.photos.all %}
+          <div class="thumbnail">
               <p class="photo-title">{{photo.title}}</p>
               {% thumbnail photo.img_file "200" as file %}
                 <a href="{% url 'photo_detail' pk=photo.pk %}">
                   <img src="{{file.url}}">
                 </a>
-              {% empty %}
-                <p>No Photo Found</p>
+                {% empty %}
+                  <p>No Photo Found</p>
               {% endthumbnail %}
             {% if photo.owner == user %}
               <p>
                 <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
               </p>
             {% endif %}
-            </article>
-          </div>
+            </div>
         {% endfor %}
-      </div>
-    </div>
-</section>
+  </section>
+  </div>
 
 {% endblock %}
