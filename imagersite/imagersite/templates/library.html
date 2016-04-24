@@ -21,7 +21,9 @@
             {% thumbnail album.get_cover "200" as img_file %}
               <img src="{{img_file.url}}">
             {% empty %}
+            <div class="default-img">
               <img src={% static "default_thumbnail/django-magic-thumb.jpg" %}>
+              </div>
             {% endthumbnail %}
             </a>
             {% if album.owner == user %}
