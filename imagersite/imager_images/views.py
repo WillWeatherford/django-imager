@@ -37,6 +37,8 @@ class AddOrEditMixin(object):
         form = super(AddOrEditMixin, self).get_form(form_class=form_class)
         owner_rel_queryset = getattr(self.request.user, self.rel_queryset_name)
         form.fields[self.rel_queryset_name].queryset = owner_rel_queryset
+        if self.form_class is AlbumForm:
+            form.fields['cover'].queryset = owner_rel_queryset
         return form
 
     def form_valid(self, form):
