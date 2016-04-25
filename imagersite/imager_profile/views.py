@@ -23,7 +23,7 @@ def edit_profile(request):
             profile_form.save()
             return HttpResponseRedirect('/profile/')
     context = {'user_form': user_form, 'profile_form': profile_form}
-    return render(request, 'edit_profile.html', context)
+    return render(request, 'imager_profile/edit_profile.html', context)
 
 
 # class EditProfileView(UpdateView):
@@ -31,12 +31,12 @@ def edit_profile(request):
 
 #     model = User
 #     form_class = UserProfileFormSet
-#     template_name = "edit_profile2.html"
+#     template_name = "imager_profile/edit_profile2.html"
 #     # fields = ['user__first_name', 'user__last_name', 'camera']
 #     success_url = '/profile/'
 
 #     def get_object(self, queryset=None):
-#         """Allow only photos belonging to current user as the view queryset."""
+#         """Allow only photos of current user as the view queryset."""
 #         self.kwargs['pk'] = self.request.user.pk
 #         return super(EditProfileView, self).get_object(queryset=queryset)
 
@@ -48,4 +48,3 @@ def edit_profile(request):
 
     # def form_valid(self):
     #     pass
-

@@ -9,14 +9,11 @@ from .views import (
     CreateAlbumView,
     EditAlbumView,
     EditPhotoView,
-    # EditProfileView,
 )
-
+HERE = 'imager_images'
 ADD, EDIT, DELETE = 'add', 'change', 'delete'
-USER = 'auth.{}_user'
-PROFILE = 'imager_profile.{}_imagerprofile'
-ALBUM = 'imager_images.{}_album'
-PHOTO = 'imager_images.{}_photo'
+ALBUM = HERE + '.{}_album'
+PHOTO = HERE + '.{}_photo'
 
 
 def log_perm_required(model, perm, view):
@@ -29,15 +26,16 @@ def log_perm_required(model, perm, view):
 
 urlpatterns = [
     url(r'^library/$',
-        login_required(TemplateView.as_view(template_name="library.html")),
+        login_required(
+            TemplateView.as_view(template_name=HERE + '/library.html')),
         name='library'),
 
     url(r'^album/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Album, template_name="album.html"),
+        DetailView.as_view(model=Album, template_name=HERE + '/album.html'),
         name='album_detail'),
 
     url(r'^photo/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Photo, template_name="photo.html"),
+        DetailView.as_view(model=Photo, template_name=HERE + '/photo.html'),
         name='photo_detail'),
 
     url(r'^album/(?P<pk>[0-9]+)/edit/$',
@@ -62,7 +60,7 @@ urlpatterns = [
             DELETE,
             DeleteView.as_view(
                 model=Album,
-                template_name='confirm_delete.html',
+                template_name=HERE + '/confirm_delete.html',
                 success_url='/images/library/',
             )),
         name='delete_album'),
@@ -73,7 +71,7 @@ urlpatterns = [
             DELETE,
             DeleteView.as_view(
                 model=Photo,
-                template_name='confirm_delete.html',
+                template_name=HERE + '/confirm_delete.html',
                 success_url='/images/library/',
             )),
         name='delete_photo'),

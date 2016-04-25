@@ -1,8 +1,7 @@
 """Establish url patterns for the user profile views."""
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required, permission_required
-from django.conf.urls import url, include
-from django.contrib import admin
-from django.views.generic import TemplateView, DetailView, DeleteView
+from django.views.generic import TemplateView
 
 from .views import (
     # EditProfileView,
@@ -10,11 +9,10 @@ from .views import (
 )
 
 
+HERE = 'imager_profile'
 ADD, EDIT, DELETE = 'add', 'change', 'delete'
 USER = 'auth.{}_user'
-PROFILE = 'imager_profile.{}_imagerprofile'
-ALBUM = 'imager_images.{}_album'
-PHOTO = 'imager_images.{}_photo'
+PROFILE = HERE + '.{}_imagerprofile'
 
 
 def log_perm_required(model, perm, view):
@@ -27,7 +25,8 @@ def log_perm_required(model, perm, view):
 
 urlpatterns = [
     url(r'^$',
-        login_required(TemplateView.as_view(template_name="profile.html")),
+        login_required(
+            TemplateView.as_view(template_name=HERE + '/profile.html')),
         name='profile',),
 
     url(r'^edit/$',

@@ -5,10 +5,10 @@ from .models import Photo, Album
 from .forms import AlbumForm
 
 
-class CreateOrEditMixin(object):
+class AddOrEditMixin(object):
     """Flexible class view for creation and editing of albums and photos."""
 
-    template_name = 'create_or_edit.html'
+    template_name = 'imager_images/add_or_edit.html'
     success_url = '/images/library/'
     own_queryset_name = None
     rel_queryset_name = None
@@ -16,12 +16,12 @@ class CreateOrEditMixin(object):
     def get(self, request, *args, **kwargs):
         """Allow only photos belonging to current user as the view queryset."""
         self.queryset = getattr(self.request.user, self.own_queryset_name)
-        return super(CreateOrEditMixin, self).get(request, *args, **kwargs)
+        return super(AddOrEditMixin, self).get(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         """Provide context data to edit and create pages."""
         context_data = super(
-            CreateOrEditMixin, self).get_context_data(*args, **kwargs)
+            AddOrEditMixin, self).get_context_data(*args, **kwargs)
         path = self.request.path
         if '/add/' in path:
             context_data['cancel_url'] = self.success_url
@@ -34,7 +34,7 @@ class CreateOrEditMixin(object):
 
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
-        form = super(CreateOrEditMixin, self).get_form(form_class=form_class)
+        form = super(AddOrEditMixin, self).get_form(form_class=form_class)
         owner_rel_queryset = getattr(self.request.user, self.rel_queryset_name)
         form.fields[self.rel_queryset_name].queryset = owner_rel_queryset
         return form
@@ -42,10 +42,10 @@ class CreateOrEditMixin(object):
     def form_valid(self, form):
         """Insert the user from request context into the form as the owner."""
         form.instance.owner = self.request.user
-        return super(CreateOrEditMixin, self).form_valid(form)
+        return super(AddOrEditMixin, self).form_valid(form)
 
 
-class CreatePhotoView(CreateOrEditMixin, CreateView):
+class CreatePhotoView(AddOrEditMixin, CreateView):
     """Create a new Photo to the database."""
 
     model = Photo
@@ -54,7 +54,7 @@ class CreatePhotoView(CreateOrEditMixin, CreateView):
     rel_queryset_name = 'albums'
 
 
-class CreateAlbumView(CreateOrEditMixin, CreateView):
+class CreateAlbumView(AddOrEditMixin, CreateView):
     """Create a new Album to the database."""
 
     model = Album
@@ -63,7 +63,7 @@ class CreateAlbumView(CreateOrEditMixin, CreateView):
     rel_queryset_name = 'photos'
 
 
-class EditPhotoView(CreateOrEditMixin, UpdateView):
+class EditPhotoView(AddOrEditMixin, UpdateView):
     """Allows user to edit their own photos."""
 
     model = Photo
@@ -72,7 +72,7 @@ class EditPhotoView(CreateOrEditMixin, UpdateView):
     rel_queryset_name = 'albums'
 
 
-class EditAlbumView(CreateOrEditMixin, UpdateView):
+class EditAlbumView(AddOrEditMixin, UpdateView):
     """Allows user to edit their own photos."""
 
     model = Album

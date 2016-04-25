@@ -62,7 +62,11 @@ TEMPLATES = [
     {
         # 'TEMPLATE_DEBUG': DEBUG,
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'imagersite', 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'imagersite', 'templates'),
+            os.path.join(BASE_DIR, 'imager_images', 'templates'),
+            os.path.join(BASE_DIR, 'imager_profile', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
