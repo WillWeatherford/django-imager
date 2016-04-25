@@ -48,10 +48,6 @@ div h4{
     width: auto;
 }
 
-.edit-delete-photo a {
-    display: inline-block;
-}
-
-.edit-delete-album a {
+.edit-delete a {
     display: inline-block;
 }
