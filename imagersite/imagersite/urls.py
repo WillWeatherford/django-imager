@@ -49,66 +49,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
-
-    url(r'^profile/$',
-        login_required(TemplateView.as_view(template_name="profile.html")),
-        name='profile',),
-
-    url(r'^profile/edit/$',
-        log_perm_required(USER, EDIT, edit_profile),
-        name='edit_profile'),
-
-    url(r'^images/library/$',
-        login_required(TemplateView.as_view(template_name="library.html")),
-        name='library'),
-
-    url(r'^images/album/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Album, template_name="album.html"),
-        name='album_detail'),
-
-    url(r'^images/photo/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Photo, template_name="photo.html"),
-        name='photo_detail'),
-
-    url(r'^images/album/(?P<pk>[0-9]+)/edit/$',
-        log_perm_required(ALBUM, EDIT, EditAlbumView.as_view()),
-        name='edit_album'),
-
-    url(r'^images/photo/(?P<pk>[0-9]+)/edit/$',
-        log_perm_required(PHOTO, EDIT, EditPhotoView.as_view()),
-        name='edit_photo'),
-
-    url(r'^images/photo/add/$',
-        log_perm_required(PHOTO, ADD, CreatePhotoView.as_view()),
-        name='add_photo'),
-
-    url(r'^images/album/add/$',
-        log_perm_required(ALBUM, ADD, CreateAlbumView.as_view()),
-        name='add_album'),
-
-    url(r'^images/album/(?P<pk>[0-9]+)/delete/$',
-        log_perm_required(
-            ALBUM,
-            DELETE,
-            DeleteView.as_view(
-                model=Album,
-                template_name='confirm_delete.html',
-                success_url='/images/library/',
-            )),
-        name='delete_album'),
-
-    url(r'^images/photo/(?P<pk>[0-9]+)/delete/$',
-        log_perm_required(
-            PHOTO,
-            DELETE,
-            DeleteView.as_view(
-                model=Photo,
-                template_name='confirm_delete.html',
-                success_url='/images/library/',
-            )),
-        name='delete_photo'),
-
-    # url(r'^profile/edit/$', EditProfileView.as_view()),
+    url(r'^images/', include('imager_images.views')),
+    url(r'^profile/', include('imager_profile.views')),
 ]
 
 
