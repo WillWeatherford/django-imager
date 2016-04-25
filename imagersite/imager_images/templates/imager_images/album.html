@@ -10,24 +10,27 @@
 <div class="lib_block">
   <h4>Photos</h4>
   <section class="photos">
-        {% for photo in object.photos.all %}
-          <div class="thumbnail">
-              <p class="photo-title">{{photo.title}}</p>
-              {% thumbnail photo.img_file "200" as file %}
-                <a href="{% url 'photo_detail' pk=photo.pk %}">
-                  <img src="{{file.url}}">
-                </a>
-                {% empty %}
-                  <p>No Photo Found</p>
-              {% endthumbnail %}
-            {% if photo.owner == user %}
-              <p>
-                <a href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
-              </p>
-            {% endif %}
-            </div>
-        {% endfor %}
+    {% for photo in object.photos.all %}
+      <div class="thumbnail">
+        <p class="photo-title">{{photo.title}}</p>
+        {% thumbnail photo.img_file "200" as file %}
+          <a href="{% url 'photo_detail' pk=photo.pk %}">
+            <img src="{{file.url}}">
+          </a>
+          {% empty %}
+            <p>No Photo Found</p>
+        {% endthumbnail %}
+
+        {% if photo.owner == user %}
+          <p class='edit-delete edit-delete-photo'>
+            <a class='edit-photo' href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+            <a class='delete-photo' href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
+          </p>
+        {% endif %}
+
+      </div>
+    {% endfor %}
   </section>
-  </div>
+</div>
 
 {% endblock %}

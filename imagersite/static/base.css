@@ -47,3 +47,7 @@ div h4{
     min-height: 100%;
     width: auto;
 }
+
+.edit-delete a {
+    display: inline-block;
+}

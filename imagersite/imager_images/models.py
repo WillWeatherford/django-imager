@@ -39,9 +39,11 @@ class Photo(md.Model):
     date_uploaded = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
     date_published = md.DateTimeField(null=True)
-    published = md.CharField(max_length=255,
-                             choices=PHOTO_PUB_CHOICES,
-                             default=PUB_DEFAULT)
+    published = md.CharField(
+        max_length=255,
+        choices=PHOTO_PUB_CHOICES,
+        default=PUB_DEFAULT,
+    )
     objects = md.Manager()
     public = PublicManager()
 
@@ -80,7 +82,7 @@ class Album(md.Model):
     published = md.CharField(
         max_length=255,
         choices=ALBUM_PUB_CHOICES,
-        default=PUB_DEFAULT
+        default=PUB_DEFAULT,
     )
 
     def __str__(self):
