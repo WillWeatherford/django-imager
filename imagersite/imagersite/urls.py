@@ -18,23 +18,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.views.generic import TemplateView, DetailView, DeleteView
-from imager_images.models import Photo, Album
-from .views import (
-    HomeView,
-    CreatePhotoView,
-    CreateAlbumView,
-    EditAlbumView,
-    EditPhotoView,
-    # EditProfileView,
-    edit_profile,
-)
-
-ADD, EDIT, DELETE = 'add', 'change', 'delete'
-USER = 'auth.{}_user'
-PROFILE = 'imager_profile.{}_imagerprofile'
-ALBUM = 'imager_images.{}_album'
-PHOTO = 'imager_images.{}_photo'
+from .views import HomeView
 
 
 def log_perm_required(model, perm, view):
@@ -49,8 +33,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^accounts/', include('registration.backends.hmac.urls')),
-    url(r'^images/', include('imager_images.views')),
-    url(r'^profile/', include('imager_profile.views')),
+    url(r'^images/', include('imager_images.urls')),
+    url(r'^profile/', include('imager_profile.urls')),
 ]
 
 
