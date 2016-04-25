@@ -1,26 +1,18 @@
 """Establish url patterns for the user profile views."""
 from django.conf.urls import url
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
+from url_utils import log_perm_required, EDIT
 
 from .views import (
-    # EditProfileView,
     edit_profile,
+    # EditProfileView,
 )
 
 
 HERE = 'imager_profile'
-ADD, EDIT, DELETE = 'add', 'change', 'delete'
 USER = 'auth.{}_user'
 PROFILE = HERE + '.{}_imagerprofile'
-
-
-def log_perm_required(model, perm, view):
-    """Shortcut to wrap a view in both login_ and permission_required."""
-    perm_name = model.format(perm)
-    return login_required(
-        permission_required(
-            perm_name, raise_exception=True)(view))
 
 
 urlpatterns = [

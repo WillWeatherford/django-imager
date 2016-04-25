@@ -1,9 +1,10 @@
 """Establish url patterns for the photo and album views."""
 
-from django.contrib.auth.decorators import login_required, permission_required
 from django.conf.urls import url
+from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView, DeleteView
 from imager_images.models import Photo, Album
+from url_utils import log_perm_required, ADD, EDIT, DELETE
 from .views import (
     CreatePhotoView,
     CreateAlbumView,
@@ -11,17 +12,8 @@ from .views import (
     EditPhotoView,
 )
 HERE = 'imager_images'
-ADD, EDIT, DELETE = 'add', 'change', 'delete'
 ALBUM = HERE + '.{}_album'
 PHOTO = HERE + '.{}_photo'
-
-
-def log_perm_required(model, perm, view):
-    """Shortcut to wrap a view in both login_ and permission_required."""
-    perm_name = model.format(perm)
-    return login_required(
-        permission_required(
-            perm_name, raise_exception=True)(view))
 
 
 urlpatterns = [
