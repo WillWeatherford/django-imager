@@ -47,3 +47,11 @@ div h4{
     min-height: 100%;
     width: auto;
 }
+
+.edit-delete-photo a {
+    display: inline-block;
+}
+
+.edit-delete-album a {
+    display: inline-block;
+}
