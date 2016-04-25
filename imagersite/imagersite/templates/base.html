@@ -7,6 +7,8 @@
         {% endblock %}
     </title>
     {% load staticfiles %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" href={% static "bootstrap.css" %}>
     <link rel="stylesheet" type="text/css" href={% static "base.css" %}>
 
@@ -18,28 +20,28 @@
   <div class="container-fluid">
     <div class="navbar-header">
 
-      <a class="navbar-brand" href="/profile">{{user.username}}</a>
+      <a class="navbar-brand" href="{% url 'profile' %}">{{user.username}}</a>
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home</a></li>
+        <li class="active"><a href="{% url 'home' %}">Home</a></li>
       </ul>
       {% if user.is_authenticated %}
       <ul class="nav navbar-nav">
-          <li><a href="/images/library/">Library</a></li>
+          <li><a href="{% url 'library' %}">Library</a></li>
       </ul>
        <ul class="nav navbar-nav">
-          <li><a href="/profile/">Profile</a></li>
+          <li><a href="{% url 'profile' %}">Profile</a></li>
       </ul>
        <ul class="nav navbar-nav">
-          <li><a href="/images/photo/add/">New Photo</a></li>
+          <li><a href="{% url 'add_photo' %}">New Photo</a></li>
       </ul>
        <ul class="nav navbar-nav">
-          <li><a href="/images/album/add/">New Album</a></li>
+          <li><a href="{% url 'add_album' %}">New Album</a></li>
       </ul>
        <ul class="nav navbar-nav navbar-right">
-        <li><a href="/accounts/logout/">Log out</a></li>
+        <li><a href="{% url 'auth_logout' %}">Log out</a></li>
       </ul>
 
        <ul class="nav navbar-nav navbar-right">
@@ -47,17 +49,15 @@
       </ul>
       {% else %}
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/accounts/login">Log in</a></li>
+        <li><a href="{% url 'auth_login' %}">Log in</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/accounts/register">Register</a></li>
+        <li><a href="{% url 'registration_register' %}">Register</a></li>
       </ul>
        {% endif  %}
     </div>
   </div>
 </nav>
-
-
 
 {% block content %}
 

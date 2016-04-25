@@ -23,14 +23,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
-TEMPLATE_DEBUG = DEBUG
+DEBUG = True
+# os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['ec2-52-39-88-2.us-west-2.compute.amazonaws.com', 'localhost']
-
+ALLOWED_HOSTS = ['localhost']
 
 # Application definition
 
@@ -61,8 +60,13 @@ ROOT_URLCONF = 'imagersite.urls'
 
 TEMPLATES = [
     {
+        # 'TEMPLATE_DEBUG': DEBUG,
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'imagersite', 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'imagersite', 'templates'),
+            os.path.join(BASE_DIR, 'imager_images', 'templates'),
+            os.path.join(BASE_DIR, 'imager_profile', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,20 +85,9 @@ WSGI_APPLICATION = 'imagersite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-user = os.environ.get('DATABASE_USER', '')
-password = os.environ.get('DATABASE_PASSWORD', '')
-
 DATABASES = {
-    'default':
-        dj_database_url.config()
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'django-imager',
-        # 'USER': user,
-        # 'HOST': 'localhost',
-        # 'PORT': '5432',
-        # 'PASSWORD': password
+    'default': dj_database_url.config()
 }
-
 
 CACHES = {
     'default': {
@@ -121,29 +114,32 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = 'America/Los_Angeles'
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
-
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), )
+
 
 ACCOUNT_ACTIVATION_DAYS = 7
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 LOGIN_REDIRECT_URL = '/profile'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_USE_SSL = True

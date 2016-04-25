@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+  {{obj.title}}
+{% endblock %}
+
+{% block content %}
+<!-- Fix scaling of image. keeping it small warps it. -->
+<section class="single-photo">
+  <article class="single-photo-info">
+    <h3>{{object.title}}</h3>
+    <p><strong>Sharing level:</strong> {{object.published}} | <strong>Date made public:</strong> {{object.date_published}}</p>
+    <p><strong>Uploaded:</strong> {{object.date_uploaded}} | <strong>Edited:</strong> {{object.date_modified}}</p>
+     <p><strong>Description:</strong> {{object.description}}</p>
+    {% if object.albums.count %}
+    <div>
+      <p><strong>Albums this photo is in:</strong></p>
+      {% for album in object.albums.all %}
+        <a href="{% url 'album_detail' pk=album.pk %}">
+          <p>{{album.title}}</p>
+        </a>
+      {% endfor %}
+    {% else %}
+      <p>This photo is not in any albums.</p>
+    {% endif %}
+    </div>
+      {% if photo.owner == user %}
+        <p class='edit-delete edit-delete-photo'>
+          <a class='edit-photo' href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+          <a class='delete-photo' href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
+        </p>
+      {% endif %}
+    <div class="photo-containerh photo-containerw">
+    <img src="{{object.img_file.url}}">
+    </div>
+  </article>
+</section>
+
+{% endblock %}

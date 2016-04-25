@@ -39,9 +39,11 @@ class Photo(md.Model):
     date_uploaded = md.DateTimeField(auto_now_add=True)
     date_modified = md.DateTimeField(auto_now=True)
     date_published = md.DateTimeField(null=True)
-    published = md.CharField(max_length=255,
-                             choices=PHOTO_PUB_CHOICES,
-                             default=PUB_DEFAULT)
+    published = md.CharField(
+        max_length=255,
+        choices=PHOTO_PUB_CHOICES,
+        default=PUB_DEFAULT,
+    )
     objects = md.Manager()
     public = PublicManager()
 
@@ -54,10 +56,6 @@ class Photo(md.Model):
         name = '.'.join((__name__, self.__class__.__name__))
         return "{}(title={}, owner={}, date_published={}".format(
             name, self.title[:20], self.owner, _pub_date(self))
-
-    # def get_url(self):
-    #     """Return string of url for single view."""
-    #     return '/images/photo/{}/'.format(self.pk)
 
 
 @python_2_unicode_compatible
@@ -84,7 +82,7 @@ class Album(md.Model):
     published = md.CharField(
         max_length=255,
         choices=ALBUM_PUB_CHOICES,
-        default=PUB_DEFAULT
+        default=PUB_DEFAULT,
     )
 
     def __str__(self):
@@ -119,12 +117,6 @@ class Album(md.Model):
         for photo in self._owned_photos(photos):
             photo.albums.add(self)
             photo.save()
-            # if self.cover is None:
-            #     self.set_cover(photo)
-
-    # def get_url(self):
-    #     """Return string of url to get to single album view."""
-    #     return '/images/album/{}/'.format(self.pk)
 
     def get_cover(self):
         """Return the user set cover of album or a default image."""
