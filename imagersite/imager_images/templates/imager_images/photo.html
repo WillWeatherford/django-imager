@@ -10,6 +10,12 @@
 <section class="single-photo">
   <article class="single-photo-info">
     <h3>{{object.title}}</h3>
+    {% if photo.owner == user %}
+      <p class='edit-delete edit-delete-photo'>
+        <a class='edit-photo' href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+        <a class='delete-photo' href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
+      </p>
+    {% endif %}
     <p><strong>Sharing level:</strong> {{object.published}} | <strong>Date made public:</strong> {{object.date_published}}</p>
     <p><strong>Uploaded:</strong> {{object.date_uploaded}} | <strong>Edited:</strong> {{object.date_modified}}</p>
      <p><strong>Description:</strong> {{object.description}}</p>
@@ -25,12 +31,6 @@
       <p>This photo is not in any albums.</p>
     {% endif %}
     </div>
-      {% if photo.owner == user %}
-        <p class='edit-delete edit-delete-photo'>
-          <a class='edit-photo' href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
-          <a class='delete-photo' href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
-        </p>
-      {% endif %}
     <div class="photo-containerh photo-containerw">
     <img src="{{object.img_file.url}}">
     </div>

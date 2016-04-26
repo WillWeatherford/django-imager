@@ -241,7 +241,6 @@ class AuthenticatedCase(TestCase):
 
     def test_edit_album(self):
         """Test that user can add a photo to their albums."""
-        import pdb; pdb.set_trace()
         for session in self.users_sessions:
             user = session['user']
             client = session['client']
