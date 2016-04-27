@@ -1,6 +1,7 @@
 """Views for adding, editing and deleting Photos and Albums."""
 
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
+from django.db.models import Q
 from .models import Photo, Album
 from .forms import AlbumForm
 
@@ -81,3 +82,16 @@ class EditAlbumView(AddOrEditMixin, UpdateView):
     form_class = AlbumForm
     own_queryset_name = 'albums'
     rel_queryset_name = 'photos'
+
+
+class AlbumPhotoDetailView(DetailView):
+    """DetailView subclass to filter only public items to non-owners."""
+
+    def get(self, request, *args, **kwargs):
+        """Allow only public queryset or items belonging to current user."""
+        query = Q(published='public')
+        # import pdb;pdb.set_trace()
+        if request.user.is_authenticated():
+            query |= Q(owner=request.user)
+        self.queryset = self.model.objects.filter(query).distinct()
+        return super(AlbumPhotoDetailView, self).get(request, *args, **kwargs)
