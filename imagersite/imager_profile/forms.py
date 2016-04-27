@@ -3,7 +3,6 @@
 from django import forms
 from imager_profile.models import ImagerProfile
 from django.contrib.auth.models import User
-# from django.forms import inlineformset_factory
 
 
 class UserForm(forms.ModelForm):
@@ -24,10 +23,3 @@ class ImagerProfileForm(forms.ModelForm):
 
         model = ImagerProfile
         exclude = ['user', 'friends']
-
-
-# UserProfileFormSet = inlineformset_factory(
-#     User,
-#     ImagerProfile,
-#     fields=('camera', 'location')
-# )
