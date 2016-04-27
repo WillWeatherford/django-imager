@@ -29,7 +29,6 @@ def ensure_imager_profile(sender, **kwargs):
 @receiver(user_activated, sender=ActivationView)
 def add_permissions(sender, **kwargs):
     """Create and save an ImagerProfile after every new User is created."""
-    # import pdb;pdb.set_trace()
     try:
         user = kwargs['user']
         try:
@@ -48,5 +47,6 @@ def remove_imager_profile(sender, **kwargs):
         instance = kwargs['instance']
         instance.is_active = False
         instance.profile.delete()
+        instance.save()
     except (KeyError, AttributeError):
         logger.warn('ImagerProfile instance not deleted.')
