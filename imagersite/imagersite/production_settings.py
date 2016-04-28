@@ -2,5 +2,5 @@
 from imagersite.settings import *
 
 DEBUG = False
-ALLOWED_HOSTS.append('ec2-52-39-88-2.us-west-2.compute.amazonaws.com')
+ALLOWED_HOSTS.append('.us-west-2.compute.amazonaws.com')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
