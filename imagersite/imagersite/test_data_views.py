@@ -239,7 +239,7 @@ class AuthenticatedCase(TestCase):
             # check that path is to library
             # check that new title is in library
 
-    def test_edit_album(self):
+    def test_edit_album_title(self):
         """Test that user can add a photo to their albums."""
         for session in self.users_sessions:
             user = session['user']
@@ -254,9 +254,10 @@ class AuthenticatedCase(TestCase):
                     'description': 'Best Album Yet',
                     'published': 'private',
                     'instance': album
-                })
-            self.assertEqual(response.status_code, 302)
-            # self.assertEqual(album.title, 'A Not So New Album')
+                }, follow=True)
+            self.assertEqual(response.status_code, 200)
+            album = user.albums.all().filter(pk=album.pk).first()
+            self.assertEqual(album.title, 'A Not So New Album')
 
     def test_only_edit_own_albums(self):
         """Test that user can only edit their own albums."""
@@ -282,7 +283,7 @@ class AuthenticatedCase(TestCase):
 
     def test_only_edit_own_profile(self):
         """Test that user can only edit their own profile."""
-        # how to test this when no pk is being passed
+        # how to test this when no pk is being passed?
         pass
 
     def test_photo_in_album(self):
@@ -305,7 +306,7 @@ class AuthenticatedCase(TestCase):
     def test_create_photo(self):
         """Test that user can add new photos."""
         # assert num of photos
-        # create photo in factory
+        # create photo in factory?
         # add photo to user
         # assert new num of photos
         pass
