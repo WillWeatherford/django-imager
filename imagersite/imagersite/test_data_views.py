@@ -34,6 +34,7 @@ ALBUM_DETAIL = ALBUM + PK
 PHOTO_DETAIL = PHOTO + PK
 EDIT_ALBUM = ALBUM_DETAIL + EDIT
 EDIT_PHOTO = PHOTO_DETAIL + EDIT
+EDIT_PROFILE = PROFILE + EDIT
 ADD_ALBUM = ALBUM + ADD
 ADD_PHOTO = PHOTO + ADD
 
@@ -47,7 +48,7 @@ ALBUMS_PAT = NUM_PAT + r' albums'
 PHOTOS_PAT = NUM_PAT + r' photos'
 
 NEW_ALBUM_PARAMS = {
-    'title': 'A New Photo',
+    'title': 'A New Album',
     'description': 'Best Album Yet',
     'published': 'private',
 }
@@ -238,8 +239,25 @@ class AuthenticatedCase(TestCase):
             # check that path is to library
             # check that new title is in library
 
-    def test_add_photo(self):
-        """Test that uset can add an album to their albums."""
+    def test_edit_album_title(self):
+        """Test that user can add a photo to their albums."""
+        for session in self.users_sessions:
+            user = session['user']
+            client = session['client']
+            client.post(ADD_ALBUM, NEW_ALBUM_PARAMS)
+            album = user.albums.all().filter(title='A New Album').first()
+            # photo = user.photos.all()
+
+            # self.assertNotIn(photo, album.photos.all())
+            response = client.post(EDIT_ALBUM.format(album.pk), {
+                    'title': 'A Not So New Album',
+                    'description': 'Best Album Yet',
+                    'published': 'private',
+                    'instance': album
+                }, follow=True)
+            self.assertEqual(response.status_code, 200)
+            album = user.albums.all().filter(pk=album.pk).first()
+            self.assertEqual(album.title, 'A Not So New Album')
 
     def test_only_edit_own_albums(self):
         """Test that user can only edit their own albums."""
@@ -252,10 +270,50 @@ class AuthenticatedCase(TestCase):
                     response = client.get(EDIT_ALBUM.format(album.pk))
                     self.assertEqual(response.status_code, 404)
 
+    def test_only_edit_own_photos(self):
+        """Test that user can only edit their own photos."""
+        for session in self.users_sessions:
+            client = session['client']
+            other_users = (ses['user'] for ses in self.users_sessions
+                           if ses != session)
+            for other in other_users:
+                for photo in other.photos.all():
+                    response = client.get(EDIT_PHOTO.format(photo.pk))
+                    self.assertEqual(response.status_code, 404)
+
+    def test_only_edit_own_profile(self):
+        """Test that user can only edit their own profile."""
+        # how to test this when no pk is being passed?
+        pass
+
+    def test_photo_in_album(self):
+        """Test that adding a photo to album also adds album to photo."""
+        # similar to adding photo to album
+        # assert photo in no albums
+        # assert that photo.albums contains album added to
+        pass
+
+    def test_user_can_edit_own_imager_profile(self):
+        """Test that user can update fields of their imager profile."""
+        # update camera, fav pic, location
+        pass
+
+    def test_user_can_edit_own_profile(self):
+        """Test that user can update Django user fields."""
+        # first name, last name, email.
+        pass
+
+    def test_create_photo(self):
+        """Test that user can add new photos."""
+        # assert num of photos
+        # create photo in factory?
+        # add photo to user
+        # assert new num of photos
+        pass
+
 
 # No user may edit resources that do not belong to him or her
 # login redirect if not logged in
-# 404 if trying to edit not owned album/photo/profile
 # test that save redirects to library
 # test 2 models * 2 methods - create/edit
 # test user profile edit on both profile and user models

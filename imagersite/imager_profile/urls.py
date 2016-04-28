@@ -4,10 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from url_utils import log_perm_required, EDIT
 
-from .views import (
-    edit_profile,
-    # EditProfileView,
-)
+from .views import edit_profile
 
 
 HERE = 'imager_profile'

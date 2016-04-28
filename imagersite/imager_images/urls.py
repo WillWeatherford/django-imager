@@ -10,6 +10,7 @@ from .views import (
     CreateAlbumView,
     EditAlbumView,
     EditPhotoView,
+    AlbumPhotoDetailView,
 )
 HERE = 'imager_images'
 ALBUM = HERE + '.{}_album'
@@ -23,11 +24,15 @@ urlpatterns = [
         name='library'),
 
     url(r'^album/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Album, template_name=HERE + '/album.html'),
+        AlbumPhotoDetailView.as_view(
+            model=Album,
+            template_name=HERE + '/album.html'),
         name='album_detail'),
 
     url(r'^photo/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=Photo, template_name=HERE + '/photo.html'),
+        AlbumPhotoDetailView.as_view(
+            model=Photo,
+            template_name=HERE + '/photo.html'),
         name='photo_detail'),
 
     url(r'^album/(?P<pk>[0-9]+)/edit/$',
