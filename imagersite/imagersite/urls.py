@@ -26,6 +26,10 @@ urlpatterns = [
     url(r'^accounts/', include('registration.backends.hmac.urls')),
     url(r'^images/', include('imager_images.urls')),
     url(r'^profile/', include('imager_profile.urls')),
+    url(r'^api/v1/', include('api.urls', namespace='imager_api')),
+    url(r'^api-auth/', include(
+        'rest_framework.urls',
+        namespace='rest_framework')),
 ]
 
 
