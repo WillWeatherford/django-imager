@@ -38,14 +38,14 @@ class AlbumListView(ListAPIView):
         IsOwnerAndReadOnly,
     )
 
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs):
         """Filter list to only those belonging to the logged in user."""
-        self.queryset = self.queryset.filter(owner=request.user)
-        return super(AlbumListView, self).list(request, *args, **kwargs)
+        queryset = super(AlbumListView, self).get_queryset(*args, **kwargs)
+        return queryset.filter(owner=self.request.user)
 
 
 # class AlbumPhotoListView(PhotoListView):
-#     """View allows API access to view list of owner's photos with an album."""
+#     """Allows API access to view list of owner's photos with an album."""
 
 #     def list(self, request, *args, **kwargs):
 #         """Filter list to only those belonging to the logged in user."""
