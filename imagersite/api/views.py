@@ -1,5 +1,5 @@
 """Establish views for API access."""
-# from .permissions import IsOwnerAndReadOnly
+from .permissions import IsOwnerAndReadOnly
 from api.serializers import PhotoSerializer, AlbumSerializer
 from imager_images.models import Photo, Album
 from rest_framework.generics import ListAPIView
@@ -13,7 +13,7 @@ class PhotoListView(ListAPIView):
     serializer_class = PhotoSerializer
     permission_classes = (
         IsAuthenticated,
-        # IsOwnerAndReadOnly,
+        IsOwnerAndReadOnly,
     )
 
     def list(self, request, *args, **kwargs):
@@ -29,7 +29,7 @@ class AlbumListView(ListAPIView):
     serializer_class = AlbumSerializer
     permission_classes = (
         IsAuthenticated,
-        # IsOwnerAndReadOnly,
+        IsOwnerAndReadOnly,
     )
 
     def get_queryset(self, *args, **kwargs):
