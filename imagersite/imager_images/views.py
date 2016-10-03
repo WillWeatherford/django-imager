@@ -90,7 +90,6 @@ class AlbumPhotoDetailView(DetailView):
     def get(self, request, *args, **kwargs):
         """Allow only public queryset or items belonging to current user."""
         query = Q(published='public')
-        # import pdb;pdb.set_trace()
         if request.user.is_authenticated():
             query |= Q(owner=request.user)
         self.queryset = self.model.objects.filter(query).distinct()
