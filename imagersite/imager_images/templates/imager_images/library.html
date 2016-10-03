@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load staticfiles %}
+
+{% block title %}
+    {{user.username}}'s Library
+{% endblock %}
+
+{% block content %}
+
+  <h3>{{user.username}}'s Library</h3>
+
+  <div class="lib-block">
+    <h4>Albums</h4>
+    <section class="albums">
+      {% for album in user.albums.all %}
+        <div class="thumbnail" id="album">
+
+          <p class="album-title">{{album.title}}</p>
+          <a href="{% url 'album_detail' pk=album.pk %}">
+          {% thumbnail album.get_cover "200" as img_file %}
+            <img src="{{img_file.url}}">
+          {% empty %}
+            <img src={% static "default_thumbnail/django-magic-thumb.jpg" %}>
+          {% endthumbnail %}
+          </a>
+
+        {% if album.owner == user %}
+          <p class='edit-delete edit-delete-album'>
+            <a class='edit-album' href="{% url 'edit_album' pk=album.pk %}">Edit</a>
+            <a class='delete-album' href="{% url 'delete_album' pk=album.pk %}">Delete</a>
+          </p>
+        {% endif %}
+
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+
+  <div class="lib-block">
+    <h4>Photos</h4>
+    <section class="photos">
+      {% for photo in user.photos.all %}
+        <div class="thumbnail">
+
+          <p class="photo-title">{{photo.title}}</p>
+          {% thumbnail photo.img_file "200" as file %}
+            <a href="{% url 'photo_detail' pk=photo.pk %}">
+              <img src="{{file.url}}">
+            </a>
+            {% empty %}
+              <p>No Photo Found</p>
+          {% endthumbnail %}
+
+        {% if photo.owner == user %}
+          <p class='edit-delete edit-delete-photo'>
+            <a class='edit-photo' href="{% url 'edit_photo' pk=photo.pk %}">Edit</a>
+            <a class='delete-photo' href="{% url 'delete_photo' pk=photo.pk %}">Delete</a>
+          </p>
+        {% endif %}
+
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+{% endblock %}
